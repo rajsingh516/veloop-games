@@ -639,6 +639,279 @@
   }
 }
 
+.wordPlayfield,
+.mergePlayfield {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 420px;
+  padding: 22px;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(201, 255, 112, 0.07), transparent 58%),
+    #17181f;
+}
+
+.wordGameHeader {
+  width: min(100%, 420px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #a6a7b1;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.wordGameHeader span:last-child {
+  color: var(--play-accent);
+  letter-spacing: 0;
+}
+
+.wordBoard {
+  width: min(100%, 390px);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 16px;
+  background: linear-gradient(145deg, #22232c, #1b1c23);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+.wordCell {
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 12px;
+  background: linear-gradient(150deg, #343641, #292a34);
+  color: #f4f2ed;
+  font: inherit;
+  font-size: clamp(21px, 5vw, 31px);
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 4px 9px rgba(0, 0, 0, 0.16);
+  transition: transform 130ms ease, border-color 130ms ease, background 130ms ease, color 130ms ease;
+  touch-action: manipulation;
+}
+
+.wordCell:hover {
+  transform: translateY(-2px);
+  border-color: rgba(201, 255, 112, 0.55);
+}
+
+.selectedWordCell {
+  transform: translateY(-2px);
+  border-color: var(--play-accent);
+  background: linear-gradient(150deg, #cfff82, #99d655);
+  color: #171a12;
+  box-shadow: 0 0 17px rgba(201, 255, 112, 0.18);
+}
+
+.wordComposer {
+  width: min(100%, 390px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.wordComposerText {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  color: #f2f0eb;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wordSubmit {
+  min-height: 39px;
+  flex: 0 0 auto;
+  padding: 0 13px;
+  border: 1px solid rgba(201, 255, 112, 0.35);
+  border-radius: 8px;
+  background: rgba(201, 255, 112, 0.13);
+  color: var(--play-accent);
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.wordSubmit:disabled {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.035);
+  color: #70717d;
+}
+
+.wordMessage {
+  width: min(100%, 390px);
+  min-height: 16px;
+  margin: 0;
+  color: #a8aaaf;
+  font-size: 10px;
+  text-align: center;
+}
+
+.foundWordList {
+  width: min(100%, 390px);
+  min-height: 31px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.foundWordList > span:not(.foundPlaceholder) {
+  padding: 5px 8px;
+  border: 1px solid rgba(201, 255, 112, 0.18);
+  border-radius: 999px;
+  background: rgba(201, 255, 112, 0.08);
+  color: #e0f8bc;
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.foundWordList .foundPlaceholder {
+  color: #72737f;
+  font-size: 10px;
+}
+
+.mergePlayfield {
+  gap: 13px;
+  touch-action: none;
+}
+
+.mergeHint,
+.mergeKeyboardHint {
+  margin: 0;
+  color: #a7a8b2;
+  font-size: 11px;
+  text-align: center;
+}
+
+.mergeHint strong {
+  color: var(--play-accent);
+}
+
+.mergeBoard {
+  width: min(100%, 410px);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 15px;
+  background: #24252e;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.27);
+}
+
+.mergeTile {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--tile-color), #24252e 30%);
+  color: #f6f4ef;
+  font-size: clamp(16px, 4.4vw, 27px);
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+  animation: tileEnter 180ms ease both;
+}
+
+.mergeTileTarget {
+  color: #191b13;
+  box-shadow: 0 0 20px rgba(201, 255, 112, 0.24);
+}
+
+.mergeControls {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+}
+
+.mergeControls > div {
+  display: flex;
+  gap: 5px;
+}
+
+.mergeControls button {
+  width: 37px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: #292a33;
+  color: #f2f0eb;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+  touch-action: manipulation;
+}
+
+.mergeControls button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(201, 255, 112, 0.4);
+  background: #343640;
+}
+
+.mergeKeyboardHint {
+  color: #777985;
+  font-size: 9px;
+}
+
+.wordCell:focus-visible,
+.wordSubmit:focus-visible,
+.mergeControls button:focus-visible {
+  outline: 2px solid var(--play-accent);
+  outline-offset: 3px;
+}
+
+@keyframes tileEnter {
+  from { opacity: 0.55; transform: scale(0.88); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 650px) {
+  .wordPlayfield,
+  .mergePlayfield {
+    min-height: 0;
+    gap: 11px;
+    padding: 16px 12px;
+  }
+
+  .wordBoard,
+  .mergeBoard {
+    width: min(100%, 360px);
+    gap: 7px;
+    padding: 8px;
+  }
+
+  .wordCell {
+    border-radius: 9px;
+  }
+
+  .wordComposer,
+  .wordMessage,
+  .foundWordList {
+    width: min(100%, 360px);
+  }
+
+  .mergeTile {
+    border-radius: 7px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .primaryAction,
   .secondaryAction {
@@ -661,6 +934,7 @@
 }
 
 .bowlingPlayfield {
+  position: relative;
   flex: 1;
   min-height: 330px;
   display: flex;
@@ -697,6 +971,723 @@
 .rangeControl > span {
   color: #876b37;
   font-variant-numeric: tabular-nums;
+}
+
+.lightThemeContainer {
+  --play-accent: #c9ff70;
+  min-height: 100svh;
+  color: #f3f1ed;
+  background:
+    radial-gradient(ellipse at 50% -20%, rgba(109, 99, 176, 0.16), transparent 48%),
+    #101116;
+  font-family: 'Aptos', 'Trebuchet MS', sans-serif;
+}
+
+.topHeader {
+  position: relative;
+  z-index: 2;
+  min-height: 70px;
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(16, 17, 22, 0.82);
+  backdrop-filter: blur(16px);
+}
+
+.backBtn {
+  border-color: rgba(255, 255, 255, 0.14);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #e9e7e0;
+}
+
+.backBtn:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.coinBalanceBadge {
+  border-color: rgba(201, 255, 112, 0.25);
+  border-radius: 999px;
+  background: rgba(201, 255, 112, 0.08);
+  color: #ecffd0;
+  box-shadow: none;
+}
+
+.headerBalances {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tokenBalanceBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px 7px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #e7e5df;
+  font-size: 11px;
+}
+
+.tokenBalanceBadge strong {
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.homeContent {
+  width: min(100% - 42px, 1040px);
+  gap: 16px;
+  margin-top: 31px;
+}
+
+.gameIllustrationBox {
+  position: relative;
+  min-height: 360px;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.8fr);
+  border-color: rgba(255, 255, 255, 0.12);
+  border-radius: 17px;
+  background: #1a1b22;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+}
+
+.gameArtwork {
+  min-height: 360px;
+  object-position: center;
+}
+
+.gameIntro {
+  position: relative;
+  overflow: hidden;
+  justify-content: flex-end;
+  padding: 34px 29px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(201, 255, 112, 0.11), transparent 38%),
+    linear-gradient(145deg, #1d1e27, #18191f);
+}
+
+.eyebrow {
+  color: var(--play-accent);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+}
+
+.gameIntro h1 {
+  color: #f4f2ec;
+  font-size: clamp(2rem, 4vw, 3.35rem);
+  letter-spacing: -0.035em;
+}
+
+.gameIntro > p:last-child {
+  color: #b2b1bc;
+  font-size: 13px;
+}
+
+.entryPanel,
+.howToPlaySection {
+  border-color: rgba(255, 255, 255, 0.1);
+  border-radius: 13px;
+  background: linear-gradient(145deg, #1b1c23, #17181e);
+  box-shadow: none;
+}
+
+.entryPanel {
+  padding: 16px 19px;
+}
+
+.personalRecord {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  overflow: hidden;
+  padding: 14px 18px;
+  border: 1px solid rgba(201, 255, 112, 0.15);
+  border-radius: 12px;
+  background: linear-gradient(100deg, rgba(201, 255, 112, 0.07), rgba(255, 255, 255, 0.025));
+}
+
+.personalRecord > div {
+  display: grid;
+  gap: 3px;
+}
+
+.personalRecord > div > span {
+  color: #989aa5;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.personalRecord > div > strong {
+  color: #f1f0e9;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.personalRecord > div:first-child > strong {
+  color: var(--play-accent);
+}
+
+.recordSpark {
+  margin-left: auto;
+  color: rgba(201, 255, 112, 0.7);
+  font-size: 25px;
+}
+
+.entryCost {
+  color: #f0eee8;
+  font-size: 16px;
+}
+
+.primaryAction,
+.secondaryAction {
+  min-height: 43px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.primaryAction {
+  border-color: rgba(201, 255, 112, 0.45);
+  background: var(--play-accent);
+  color: #171a12;
+  box-shadow: 0 8px 22px rgba(201, 255, 112, 0.1);
+}
+
+.primaryAction:hover {
+  filter: brightness(1.06);
+  transform: translateY(-2px);
+}
+
+.secondaryAction {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  color: #e4e3df;
+}
+
+.secondaryAction:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.notice,
+.rewardNotice {
+  border-radius: 10px;
+}
+
+.howToPlaySection {
+  gap: 11px 24px;
+  padding: 19px;
+}
+
+.howToPlaySection h2 {
+  color: #f1efe9;
+  font-family: 'Aptos', 'Trebuchet MS', sans-serif;
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.howToPlaySection > p {
+  color: #a9aab4;
+  font-size: 12px;
+}
+
+.rewardSummary {
+  color: #d9efaf;
+  font-size: 11px;
+}
+
+.modalOverlay {
+  background: rgba(9, 10, 16, 0.78);
+  backdrop-filter: blur(8px);
+  animation: playFadeIn 150ms ease both;
+}
+
+.guideModal,
+.gameOverModal {
+  gap: 13px;
+  border-color: rgba(255, 255, 255, 0.13);
+  border-radius: 15px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(201, 255, 112, 0.07), transparent 42%),
+    #1c1d24;
+  color: #f3f1ed;
+  box-shadow: 0 25px 85px rgba(0, 0, 0, 0.5);
+  animation: playModalIn 200ms ease both;
+}
+
+.guideModal h2,
+.gameOverModal h2 {
+  color: #f4f2ec;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 29px;
+}
+
+.guideModal > p:not(.eyebrow),
+.gameOverModal > p:not(.eyebrow) {
+  color: #b2b2bd;
+  font-size: 13px;
+}
+
+.guideMeta {
+  color: #d9efaf !important;
+}
+
+.activePlayArea {
+  width: min(100% - 42px, 920px);
+  min-height: min(67svh, 600px);
+  margin: 25px auto 20px;
+  border-color: rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: #191a21;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  animation: playFadeIn 300ms ease both;
+}
+
+.gameHud {
+  min-height: 65px;
+  padding: 10px 22px;
+  border-color: rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.025);
+  color: #a6a7b1;
+}
+
+.gameHud strong {
+  color: #f0eee8;
+  font-size: 19px;
+}
+
+.bowlingPlayfield {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 28px;
+  background:
+    radial-gradient(ellipse at 50% 90%, rgba(201, 255, 112, 0.09), transparent 48%),
+    repeating-linear-gradient(90deg, transparent 0 75px, rgba(255, 255, 255, 0.025) 76px 77px),
+    #17181f;
+}
+
+.bowlingBall {
+  position: absolute;
+  z-index: 1;
+  bottom: 12%;
+  left: 50%;
+  width: 25px;
+  aspect-ratio: 1;
+  border: 2px solid rgba(255, 255, 255, 0.88);
+  border-radius: 50%;
+  background: radial-gradient(circle at 33% 28%, #f7ffdc, #9ad54e 68%, #52782e);
+  box-shadow: 0 0 18px rgba(201, 255, 112, 0.3);
+  opacity: 0;
+  transform: translateX(-50%);
+}
+
+.ballRolling {
+  opacity: 1;
+  animation: rollBall 620ms cubic-bezier(0.35, 0.05, 0.7, 0.25) both;
+}
+
+.pinRack {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 490px);
+  min-height: 150px;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015));
+  color: var(--play-accent);
+  font-size: clamp(29px, 5vw, 43px);
+  letter-spacing: 0.22em;
+  text-shadow: 0 0 20px rgba(201, 255, 112, 0.23);
+  animation: rackGlow 2.8s ease-in-out infinite alternate;
+}
+
+.pinRack span {
+  color: #484a55;
+  text-shadow: none;
+}
+
+.rangeControl {
+  width: min(100%, 410px);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 16px;
+  color: #d8d7de;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rangeControl span {
+  color: var(--play-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.rangeControl input {
+  width: 100%;
+  height: 5px;
+  grid-column: 1 / -1;
+  accent-color: var(--play-accent);
+  cursor: pointer;
+}
+
+.rollButton,
+.fireButton {
+  min-height: 43px;
+  padding: 0 19px;
+  border: 1px solid rgba(201, 255, 112, 0.4);
+  border-radius: 9px;
+  background: var(--play-accent);
+  color: #161910;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+  transition: transform 150ms ease, filter 150ms ease;
+}
+
+.rollButton:hover:not(:disabled),
+.fireButton:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.07);
+}
+
+.rollButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gameHint {
+  right: 18px;
+  bottom: 16px;
+  left: 18px;
+  color: #898a96;
+  font-size: 10px;
+}
+
+.shooterPlayfield {
+  flex: 1;
+  min-height: 410px;
+  background-color: #171820;
+  background-image:
+    radial-gradient(ellipse at 50% 90%, rgba(117, 100, 211, 0.19), transparent 48%),
+    radial-gradient(rgba(255, 255, 255, 0.36) 0.7px, transparent 0.7px);
+  background-size: auto, 25px 25px;
+}
+
+.laneTrack {
+  inset: 0 16% 48px;
+  gap: 9px;
+}
+
+.shooterLane {
+  border-color: rgba(177, 168, 240, 0.18);
+  border-radius: 12px 12px 5px 5px;
+  background: linear-gradient(180deg, rgba(115, 103, 181, 0.045), rgba(115, 103, 181, 0.16));
+  transition: background 160ms ease;
+}
+
+.shooterLane:hover {
+  background: linear-gradient(180deg, rgba(115, 103, 181, 0.1), rgba(115, 103, 181, 0.23));
+}
+
+.shooterPlayer,
+.shooterHazard {
+  width: 47px;
+  border: 2px solid #d6ff9c;
+  border-radius: 15px 15px 9px 9px;
+  background: linear-gradient(150deg, #d8ff9d, #7ab83b);
+  color: transparent;
+  box-shadow: 0 0 26px rgba(201, 255, 112, 0.35);
+  animation: playerFloat 1.6s ease-in-out infinite;
+}
+
+.shooterPlayer {
+  bottom: 10%;
+}
+
+.shooterHazard {
+  width: 36px;
+  border-color: #ff9c82;
+  border-radius: 8px;
+  background: linear-gradient(140deg, #ffb49d, #c85561);
+  color: #fff;
+  box-shadow: 0 0 22px rgba(255, 110, 118, 0.3);
+  animation: hazardPulse 600ms ease-in-out infinite alternate;
+}
+
+.shooterControls {
+  position: absolute;
+  right: 0;
+  bottom: 15px;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.shooterControls .gameHint {
+  position: static;
+}
+
+.fireButton {
+  min-height: 37px;
+  padding-inline: 22px;
+  border-color: rgba(255, 143, 132, 0.4);
+  background: #ff9c82;
+}
+
+.finalScore {
+  color: #b3b4bd !important;
+}
+
+.finalScore strong {
+  color: #f3f1ed;
+}
+
+.newRecord {
+  margin: -3px 0 0;
+  color: var(--play-accent);
+  font-size: 12px;
+  font-weight: 850;
+  text-align: center;
+  animation: recordPop 260ms cubic-bezier(0.2, 0.8, 0.3, 1.2) both;
+}
+
+.previousBest {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #a5a6b0;
+  font-size: 11px;
+}
+
+.previousBest strong {
+  color: #e9e8e2;
+  font-variant-numeric: tabular-nums;
+}
+
+.bottomNav {
+  min-height: 64px;
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(16, 17, 22, 0.91);
+  backdrop-filter: blur(16px);
+}
+
+.bottomNav button {
+  color: #a4a5af;
+}
+
+.bottomNav .activeNavItem {
+  background: rgba(201, 255, 112, 0.09);
+  color: var(--play-accent);
+}
+
+.errorPanel {
+  align-self: center;
+  border-color: rgba(255, 255, 255, 0.12);
+  border-radius: 15px;
+  background: #1c1d24;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+}
+
+.errorPanel h1 {
+  color: #f3f1ed;
+}
+
+.errorPanel > p:not(.eyebrow) {
+  color: #aaabb5;
+}
+
+.primaryAction:focus-visible,
+.secondaryAction:focus-visible,
+.backBtn:focus-visible,
+.bottomNav button:focus-visible,
+.rollButton:focus-visible,
+.fireButton:focus-visible,
+.shooterLane:focus-visible {
+  outline: 2px solid var(--play-accent);
+  outline-offset: 3px;
+}
+
+@keyframes playFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes playModalIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes rackGlow {
+  from { box-shadow: inset 0 0 24px rgba(201, 255, 112, 0.015); }
+  to { box-shadow: inset 0 0 34px rgba(201, 255, 112, 0.075); }
+}
+
+@keyframes rollBall {
+  0% { bottom: 12%; transform: translateX(-50%) scale(1.25); }
+  80% { opacity: 1; }
+  100% { bottom: 78%; transform: translateX(-50%) scale(0.5); opacity: 0; }
+}
+
+@keyframes playerFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+@keyframes hazardPulse {
+  from { filter: brightness(0.9); }
+  to { filter: brightness(1.22); }
+}
+
+@keyframes recordPop {
+  from { opacity: 0; transform: translateY(5px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 700px) {
+  .topHeader {
+    min-height: 64px;
+    padding-inline: 15px;
+  }
+
+  .headerBalances {
+    gap: 5px;
+  }
+
+  .tokenBalanceBadge,
+  .coinBalanceBadge {
+    gap: 5px;
+    padding: 6px 8px 6px 6px;
+    font-size: 9px;
+  }
+
+  .miniCoin {
+    width: 19px;
+    height: 19px;
+  }
+
+  .homeContent {
+    width: min(100% - 28px, 1040px);
+    margin-top: 18px;
+  }
+
+  .gameIllustrationBox {
+    min-height: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .gameArtwork {
+    height: 220px;
+    min-height: 220px;
+  }
+
+  .gameIntro {
+    padding: 23px 21px 25px;
+  }
+
+  .entryPanel {
+    align-items: flex-start;
+  }
+
+  .entryPanel .primaryAction {
+    align-self: center;
+    padding-inline: 12px;
+  }
+
+  .howToPlaySection {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 17px;
+  }
+
+  .howToPlaySection > p {
+    margin: 0;
+  }
+
+  .rewardSummary {
+    grid-column: auto;
+    margin-top: 4px;
+  }
+
+  .activePlayArea {
+    width: min(100% - 24px, 920px);
+    min-height: min(68svh, 600px);
+    margin-top: 13px;
+  }
+
+  .gameHud {
+    min-height: 55px;
+    gap: 7px;
+    padding-inline: 11px;
+    font-size: 10px;
+  }
+
+  .gameHud strong {
+    font-size: 16px;
+  }
+
+  .bowlingPlayfield {
+    gap: 17px;
+    padding: 18px;
+  }
+
+  .pinRack {
+    min-height: 115px;
+    padding: 10px;
+    letter-spacing: 0.12em;
+  }
+
+  .shooterPlayfield {
+    min-height: 365px;
+  }
+
+  .laneTrack {
+    inset-inline: 6%;
+  }
+
+  .shooterControls {
+    gap: 7px;
+  }
+
+  .shooterControls .gameHint {
+    font-size: 9px;
+  }
+
+  .fireButton {
+    min-height: 34px;
+    padding-inline: 15px;
+  }
+
+  .bottomNav {
+    gap: 10px;
+  }
+
+  .bottomNav button {
+    min-width: 0;
+    padding-inline: 10px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightThemeContainer *,
+  .lightThemeContainer *::before,
+  .lightThemeContainer *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 .rangeControl input {

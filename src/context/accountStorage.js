@@ -6,7 +6,8 @@ export const createInitialAccount = () => {
     gameCoins: 40,
     userInventory: { VEs: 10, SVEs: 5, Gems: 50, Tokens: 150, Spins: 2 },
     seenGuides: {},
-    redemptionHistory: []
+    redemptionHistory: [],
+    gameRecords: {}
   };
 
   try {
@@ -20,7 +21,8 @@ export const createInitialAccount = () => {
       tokens,
       userInventory: { ...fallback.userInventory, ...saved.userInventory, Tokens: tokens },
       seenGuides: saved.seenGuides || {},
-      redemptionHistory: saved.redemptionHistory || []
+      redemptionHistory: saved.redemptionHistory || [],
+      gameRecords: saved.gameRecords || {}
     };
   } catch {
     return fallback;

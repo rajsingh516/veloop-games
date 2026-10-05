@@ -1,34 +1,61 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGameCoins } from '../../context/useGameCoins';
 import styles from '../../styles/Games.module.css';
 
-export default function GameCard({ game }) {
+export default function GameCard({ game, index = 0 }) {
   const navigate = useNavigate();
+  const { tokens } = useGameCoins();
+  const hasEntryTokens = tokens >= game.cost;
 
   const handlePlayClick = () => {
+    if (!game.playable) return;
+    if (!hasEntryTokens) {
+      navigate('/redeem', { state: { returnTo: `/games/${game.route}` } });
+      return;
+    }
     navigate(`/games/${game.route}`, { state: { game } });
   };
 
   return (
-    <div className={styles.gameCard}>
-      <div className={styles.imageContainer}>
-        <img src={game.image} alt={game.name} className={styles.gameArtwork} loading="lazy" />
-      </div>
-      <div className={styles.cardFooter}>
-        <div className={styles.tokenRequirement}>
-          <img src="/assets/tokens/multi_token.png" alt="Token" className={styles.tokenIcon} />
-          <span>{game.cost} Tokens</span>
+    <article className={styles.gameCard} style={{ '--card-order': index }}>
+      <button
+        className={styles.cardArtwork}
+        type="button"
+        onClick={handlePlayClick}
+        disabled={!game.playable}
+        aria-label={game.playable ? `View ${game.name}` : `${game.name}, coming soon`}
+      >
+        <img src={game.image} alt="" loading="lazy" />
+        <span className={`${styles.availabilityBadge} ${game.playable ? styles.availableBadge : ''}`}>
+          <span />{game.playable ? 'PLAY NOW' : 'COMING SOON'}
+        </span>
+        <span className={styles.cardArrow} aria-hidden="true">{game.playable ? '↗' : '✦'}</span>
+      </button>
+      <div className={styles.cardDetails}>
+        <div className={styles.cardTitleRow}>
+          <h3>{game.name}</h3>
+          <span className={styles.gameNumber}>{String(game.id).padStart(2, '0')}</span>
         </div>
-        <button
-          className={styles.playNowBtn}
-          onClick={handlePlayClick}
-          disabled={!game.playable}
-          aria-label={game.playable ? `Play ${game.name}, entry fee ${game.cost} tokens` : `${game.name} coming soon`}
-        >
-          <span>{game.playable ? 'Play Now' : 'Coming Soon'}</span>
-          {game.playable && <span className={styles.shimmerEffect} aria-hidden="true" />}
-        </button>
+        <p>{game.description}</p>
+        <div className={styles.cardFooter}>
+          <span className={styles.tokenRequirement}>
+            <img src="/assets/tokens/multi_token.png" alt="" />
+            <strong>{game.cost}</strong> tokens
+          </span>
+          {game.playable ? (
+            <button
+              className={styles.playNowBtn}
+              onClick={handlePlayClick}
+              aria-label={hasEntryTokens ? `Play ${game.name}` : `Get tokens to play ${game.name}`}
+            >
+              {hasEntryTokens ? 'Play' : 'Get tokens'} <span aria-hidden="true">→</span>
+            </button>
+          ) : (
+            <span className={styles.waitlistLabel}>In the works <span aria-hidden="true">✦</span></span>
+          )}
+        </div>
       </div>
-    </div>
+    </article>
   );
 }

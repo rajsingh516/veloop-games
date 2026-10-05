@@ -1,9 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createInitialAccount, storageKey } from './accountStorage';
 import { GameCoinContext } from './useGameCoins';
 
 export const GameCoinProvider = ({ children }) => {
   const [account, setAccount] = useState(createInitialAccount);
+  const accountRef = useRef(account);
+
+  const updateAccount = (update) => {
+    const nextAccount = update(accountRef.current);
+    accountRef.current = nextAccount;
+    setAccount(nextAccount);
+    return nextAccount;
+  };
 
   useEffect(() => {
     try {
@@ -14,7 +22,7 @@ export const GameCoinProvider = ({ children }) => {
   }, [account]);
 
   const setTokens = (value) => {
-    setAccount((previous) => {
+    updateAccount((previous) => {
       const tokens = typeof value === 'function' ? value(previous.tokens) : value;
       return {
         ...previous,
@@ -25,49 +33,85 @@ export const GameCoinProvider = ({ children }) => {
   };
 
   const deductTokens = (amount = 20) => {
-    if (account.tokens >= amount) {
-      setTokens((previous) => previous - amount);
-      return true;
-    }
-    return false;
+    if (!Number.isFinite(amount) || amount <= 0) return false;
+    let deducted = false;
+    updateAccount((previous) => {
+      if (previous.tokens < amount) return previous;
+      deducted = true;
+      const tokens = previous.tokens - amount;
+      return {
+        ...previous,
+        tokens,
+        userInventory: { ...previous.userInventory, Tokens: tokens }
+      };
+    });
+    return deducted;
   };
 
   const addGameCoins = (amount) => {
     if (Number.isFinite(amount) && amount > 0) {
-      setAccount((previous) => ({ ...previous, gameCoins: previous.gameCoins + amount }));
+      updateAccount((previous) => ({ ...previous, gameCoins: previous.gameCoins + amount }));
     }
   };
 
+  const recordGameRound = (gameId, score, reward) => {
+    if (typeof gameId !== 'string' || !gameId
+      || !Number.isFinite(score) || score < 0
+      || !Number.isFinite(reward) || reward < 0) return false;
+    updateAccount((previous) => {
+      const currentRecord = previous.gameRecords[gameId] || { bestScore: 0, roundsPlayed: 0 };
+      return {
+        ...previous,
+        gameCoins: previous.gameCoins + reward,
+        gameRecords: {
+          ...previous.gameRecords,
+          [gameId]: {
+            bestScore: Math.max(currentRecord.bestScore, score),
+            roundsPlayed: currentRecord.roundsPlayed + 1
+          }
+        }
+      };
+    });
+    return true;
+  };
+
   const markGuideSeen = (gameId) => {
-    setAccount((previous) => ({
+    updateAccount((previous) => ({
       ...previous,
       seenGuides: { ...previous.seenGuides, [gameId]: true }
     }));
   };
 
   const redeemCurrency = (type, costInCoins, rewardAmount) => {
-    if (account.gameCoins < costInCoins || !Object.hasOwn(account.userInventory, type)) return false;
-
-    setAccount((previous) => ({
-      ...previous,
-      gameCoins: previous.gameCoins - costInCoins,
-      tokens: type === 'Tokens' ? previous.tokens + rewardAmount : previous.tokens,
-      userInventory: {
-        ...previous.userInventory,
-        [type]: previous.userInventory[type] + rewardAmount
-      },
-      redemptionHistory: [
-        {
-          id: `${Date.now()}-${type}`,
-          type,
-          cost: costInCoins,
-          reward: rewardAmount,
-          date: new Date().toISOString()
+    if (!Number.isFinite(costInCoins) || costInCoins <= 0
+      || !Number.isFinite(rewardAmount) || rewardAmount <= 0) return false;
+    let redeemed = false;
+    updateAccount((previous) => {
+      if (previous.gameCoins < costInCoins || !Object.hasOwn(previous.userInventory, type)) return previous;
+      redeemed = true;
+      const tokens = type === 'Tokens' ? previous.tokens + rewardAmount : previous.tokens;
+      return {
+        ...previous,
+        gameCoins: previous.gameCoins - costInCoins,
+        tokens,
+        userInventory: {
+          ...previous.userInventory,
+          [type]: previous.userInventory[type] + rewardAmount,
+          Tokens: tokens
         },
-        ...previous.redemptionHistory
-      ].slice(0, 10)
-    }));
-    return true;
+        redemptionHistory: [
+          {
+            id: `${Date.now()}-${type}`,
+            type,
+            cost: costInCoins,
+            reward: rewardAmount,
+            date: new Date().toISOString()
+          },
+          ...previous.redemptionHistory
+        ].slice(0, 10)
+      };
+    });
+    return redeemed;
   };
 
   return (
@@ -76,6 +120,8 @@ export const GameCoinProvider = ({ children }) => {
       setTokens,
       gameCoins: account.gameCoins,
       addGameCoins,
+      gameRecords: account.gameRecords,
+      recordGameRound,
       userInventory: account.userInventory,
       deductTokens,
       redeemCurrency,

@@ -1,84 +1,111 @@
 # VELOOP Games
 
-A responsive games hub and rewards prototype built with React and Vite. It contains 13 artwork-led game banners, two playable mini-games, a shared token/Game Coin account, and a five-category redemption center.
+A responsive VELOOP Rewards arcade built with React and Vite. It includes a 13-game library, two playable puzzle games, a token-based entry flow, persistent personal records, Game Coin rewards, and a redemption center.
+
+Live demo:
+https://veloop-games-i5zy9jrov-rajsingh8879-7203.vercel.app
 
 ## Features
 
-- Thirteen reusable game cards generated from `src/data/gamesData.js` and the supplied AVIF artwork.
-- Horizontal, touch-scrollable carousel with autoplay, interaction pause, keyboard-accessible dot controls, and no navigation arrows.
-- A coded 20-Token entry section and an infinite, reduced-motion-aware Play Now shimmer on playable cards.
-- Two original playable challenges based on the supplied art: Bowlexa bowling (aim, power, and throws) and Cosmo Warrior space shooter (three lanes, hazards, shields, and fire controls). Both include first-play guides, score/timer gameplay, a one-time revive, and score-based Game Coin rewards.
-- Shared tokens, Game Coins, inventories, completed guides, and recent redemptions persisted in browser local storage.
-- Confirmation-based Game Coin conversions into VEs, SVEs, Gems, Tokens, and Spins, with balance validation and redemption history.
-- Responsive light game screens and a dark games/rewards hub, designed for viewports from 320px and up.
+- 13 reusable game cards generated from structured data and AVIF artwork
+- Searchable, filterable game library with a featured challenge and responsive arcade layout
+- Token-based entry requirement set to 20 Tokens per playable challenge
+- Two playable puzzle games:
+  - Word Hunt: timed adjacent-letter word search with a dictionary, word scoring, and duplicate protection
+  - Merge Master: timed 2048-style puzzle with keyboard, WASD, swipe, and on-screen direction controls
+- Bowlexa and Cosmo Warrior remain visible as coming-soon games
+- First-time guide/tutorial flow before gameplay starts
+- Score-based Game Coin rewards, per-game personal bests, and completed-round counts
+- Centralized balances, game records, guides, and redemption history persisted in browser storage
+- Redemption section for converting Game Coins into VEs, SVEs, Gems, Tokens, and Spins
+- Responsive layout for mobile, tablet, and desktop devices
 
-## Technology
+## Tech Stack
 
-- React 19 and Vite
+- React
+- Vite
 - React Router DOM
 - React Context API
 - CSS Modules
-- Bootstrap CSS utilities
+- Bootstrap utility classes
 
 ## Project Structure
 
 ```text
-src/
-├── components/games/
-│   ├── GameCard.jsx
-│   ├── GamesCarousel.jsx
-│   ├── GameHome.jsx
-│   └── GameRedeem.jsx
-├── context/GameCoinContext.jsx
-├── data/gamesData.js
-├── styles/
-│   ├── GamePlay.module.css
-│   └── Games.module.css
-├── App.jsx
-└── main.jsx
-public/assets/
-├── games/       # 13 supplied AVIF game images
-└── tokens/      # Source reward JPEGs and transparent PNG derivatives
+veloop-games/
+├── public/
+│   └── assets/
+│       ├── games/
+│       └── tokens/
+├── src/
+│   ├── components/
+│   │   └── games/
+│   ├── context/
+│   ├── data/
+│   ├── styles/
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── asset-sources/
+├── index.html
+├── package.json
+├── vite.config.js
+├── .gitignore
+├── .oxlintrc.json
+├── README.md
+└── package-lock.json
 ```
 
-## Routes
+## Getting Started
 
-- `/` — Games carousel and account balances
-- `/games/:gameId` — Selected game home, guide, play, and reward flow
-- `/redeem` — Central Game Coin conversion center
+Install dependencies:
 
-The playable routes are `bowlexa` and `cosmo-warrior`. The mini-games use original web gameplay and supplied banner artwork; they do not reproduce third-party game code or characters.
-
-## Asset Preparation
-
-All 13 game banners are cropped to remove the embedded XP/Play Now footer and encoded as genuine AVIF files, with `object-fit: cover` in a consistent card ratio. The original JPEG image bytes are preserved under `asset-sources/games/`. The supplied token and reward JPEGs have black backgrounds, so transparent PNG derivatives are included and used by the interface; the source JPEGs remain unchanged. Game cards lazy-load their artwork.
-
-## Account Data
-
-For this frontend prototype, the account starts with 150 Tokens and 40 Game Coins. All changes are stored in this browser's local storage and are not real account transactions. A production deployment should replace this local state with server-validated balances, game sessions, scores, and rewards.
-
-## Run Locally
-
-Install dependencies and start the development server:
-
-```sh
+```bash
 npm install
+```
+
+Run the app locally:
+
+```bash
 npm run dev
 ```
 
-Create and locally preview a production build:
+Build for production:
 
-```sh
+```bash
 npm run build
+```
+
+Preview the production build locally:
+
+```bash
 npm run preview
 ```
 
 Run lint checks:
 
-```sh
+```bash
 npm run lint
 ```
 
+## Routes
+
+- `/` — Games hub and account summary
+- `/games/:gameId` — Game home, guide, play, and reward flow
+- `/redeem` — Game Coin redemption center
+
+## Notes
+
+This project is a frontend prototype. The app uses local browser storage to simulate account balances, game records, and reward persistence for demo purposes. A production version would require backend integration for authentication, real token validation, and secure balance updates.
+
 ## Deployment
 
-The Vite app can be deployed to Vercel or Netlify using the standard Vite build command, `npm run build`, and output directory, `dist`.
+The app is deployed on Vercel and configured for a standard Vite build with the output directory set to `dist`.
+
+## License
+
+This project is for demonstration and portfolio purposes.
+
+## Author
+
+Raj Singh
