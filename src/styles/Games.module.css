@@ -1,0 +1,812 @@
+.gameHub {
+  min-height: 100svh;
+  overflow: hidden;
+  color: #f5f3ee;
+  background-color: #161827;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 54px 54px;
+}
+
+.siteHeader,
+.redeemHeader {
+  min-height: 76px;
+  padding: 14px max(24px, calc((100vw - 1320px) / 2));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.brandMark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  color: #f8f7f2;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+}
+
+.brandMark span {
+  color: #e8b85a;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+.accountBalances {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.accountBalances > span {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.accountBalances img,
+.balanceDisplay img,
+.historyList img {
+  width: 23px;
+  height: 23px;
+  object-fit: contain;
+}
+
+.accountBalances small {
+  color: #a9adbb;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.carouselSection {
+  max-width: 1420px;
+  margin: 0 auto;
+  padding: 76px 44px 50px;
+}
+
+.sectionHeader {
+  margin: 0 0 30px;
+  color: #aeb2c0;
+}
+
+.sectionEyebrow {
+  margin: 0 0 10px;
+  color: #d9ac58;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.sectionHeader h1,
+.redeemContent > h1 {
+  margin: 0;
+  color: #f7f5ef;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 42px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.12;
+}
+
+.sectionHeader > p:last-child {
+  margin-top: 10px;
+  color: #b5b8c4;
+  font-size: 15px;
+}
+
+.carouselContainer {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  padding: 4px 2px 20px;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+  touch-action: pan-x;
+}
+
+.carouselContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.gameCard {
+  width: 252px;
+  min-width: 252px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  scroll-snap-align: start;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 7px;
+  background: #202336;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.2);
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.gameCard:hover,
+.gameCard:focus-within {
+  transform: translateY(-3px);
+  border-color: rgba(229, 186, 104, 0.45);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+}
+
+.imageContainer {
+  width: 100%;
+  aspect-ratio: 0.83;
+  overflow: hidden;
+  background: #25283a;
+}
+
+.gameArtwork {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+.cardFooter {
+  min-height: 116px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 14px 14px;
+  background: #202336;
+}
+
+.tokenRequirement {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #e8e5db;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tokenIcon {
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+}
+
+.playNowBtn,
+.redeemAction {
+  position: relative;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  overflow: hidden;
+  border: 1px solid #d3a651;
+  border-radius: 5px;
+  background: #d7aa58;
+  color: #191a22;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: transform 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.playNowBtn:hover:not(:disabled),
+.redeemAction:hover {
+  transform: translateY(-1px);
+  background: #ebc477;
+  box-shadow: 0 6px 18px rgba(215, 170, 88, 0.2);
+}
+
+.playNowBtn:active:not(:disabled),
+.redeemAction:active {
+  transform: scale(0.98);
+}
+
+.playNowBtn:focus-visible,
+.dot:focus-visible,
+.redeemAction:focus-visible,
+.backBtn:focus-visible,
+.cancelAction:focus-visible {
+  outline: 2px solid #f2c76e;
+  outline-offset: 3px;
+}
+
+.playNowBtn:disabled {
+  border-color: #515463;
+  background: #373a49;
+  color: #b1b3bd;
+  cursor: not-allowed;
+}
+
+.shimmerEffect {
+  position: absolute;
+  inset-block: -20%;
+  left: -70%;
+  width: 38%;
+  transform: skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.43), transparent);
+  animation: infiniteShimmer 3.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes infiniteShimmer {
+  0%, 25% { left: -70%; }
+  75%, 100% { left: 140%; }
+}
+
+.carouselFooter {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-top: 12px;
+}
+
+.dotIndicators {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #666b7a;
+  cursor: pointer;
+  transition: width 180ms ease, flex-basis 180ms ease, background-color 180ms ease;
+}
+
+.activeDot {
+  width: 20px;
+  flex-basis: 20px;
+  border-radius: 5px;
+  background: #e1b45f;
+}
+
+.carouselCount {
+  position: absolute;
+  right: 2px;
+  color: #f2eee5;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.carouselCount i {
+  padding: 0 4px;
+  color: #777d8d;
+  font-style: normal;
+}
+
+.swipeHint {
+  display: none;
+  margin-top: 13px;
+  color: #aeb2c0;
+  font-size: 12px;
+  text-align: center;
+}
+
+.swipeHint span {
+  padding-left: 5px;
+  color: #e1b45f;
+}
+
+.hubFooter {
+  max-width: 1332px;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  padding: 20px 12px 26px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #989dac;
+  font-size: 12px;
+}
+
+.redeemPageDark {
+  min-height: 100svh;
+  color: #f5f3ee;
+  background-color: #161827;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 54px 54px;
+}
+
+.redeemHeader {
+  padding-inline: max(24px, calc((100vw - 1320px) / 2));
+}
+
+.backBtn,
+.cancelAction {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 5px;
+  background: transparent;
+  color: #e8e5db;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.balanceDisplay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f6f3ec;
+}
+
+.balanceDisplay span {
+  display: grid;
+  gap: 1px;
+  font-size: 15px;
+}
+
+.balanceDisplay small {
+  color: #aeb2c0;
+  font-size: 11px;
+}
+
+.redeemContent {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 58px 28px 72px;
+}
+
+.redeemContent > h1 {
+  font-size: 38px;
+}
+
+.redeemIntro {
+  max-width: 560px;
+  margin-top: 10px;
+  color: #b4b8c5;
+  font-size: 15px;
+}
+
+.redeemStatus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+  padding: 12px 15px;
+  border: 1px solid rgba(133, 190, 157, 0.32);
+  border-radius: 5px;
+  background: rgba(80, 139, 105, 0.12);
+  color: #c1e5ce;
+  font-size: 13px;
+}
+
+.redeemStatus button {
+  border: 0;
+  background: none;
+  color: inherit;
+  font-size: 19px;
+  cursor: pointer;
+}
+
+.inventoryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 34px;
+}
+
+.invCard {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 19px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: #202336;
+}
+
+.rewardCardTop {
+  width: 100%;
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rewardArt {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.rewardBalance {
+  color: #b2b6c3;
+  font-size: 11px;
+}
+
+.rewardType {
+  margin-top: 15px;
+  color: #d8ad5d;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.invCard h2 {
+  min-height: 44px;
+  margin: 5px 0 13px;
+  color: #f5f3ed;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.conversionRate {
+  margin-bottom: 18px;
+  color: #d1d3db;
+  font-size: 12px;
+}
+
+.conversionRate span {
+  padding: 0 4px;
+  color: #e2b55e;
+}
+
+.redeemAction {
+  width: 100%;
+  margin-top: auto;
+  padding: 8px 12px;
+}
+
+.historySection {
+  margin-top: 54px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.historyHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 14px;
+  padding: 24px 0 14px;
+}
+
+.historyHeading h2 {
+  margin: 0;
+  color: #f2f0e9;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.historyHeading > span {
+  color: #9da2b0;
+  font-size: 12px;
+}
+
+.emptyHistory {
+  padding: 18px 0;
+  color: #aeb2c0;
+  font-size: 13px;
+}
+
+.historyList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.historyList li {
+  min-height: 55px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #e3e2dd;
+  font-size: 13px;
+}
+
+.historyList li > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.historyList img {
+  width: 21px;
+  height: 21px;
+}
+
+.historyList i {
+  color: #d5aa59;
+  font-style: normal;
+}
+
+.historyList time {
+  color: #9ea3b0;
+  font-size: 11px;
+}
+
+.modalOverlay {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 20px;
+  background: rgba(9, 10, 16, 0.72);
+  backdrop-filter: blur(5px);
+}
+
+.confirmModal {
+  width: min(100%, 440px);
+  padding: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 7px;
+  background: #202336;
+  color: #f5f3ee;
+}
+
+.confirmModal h2 {
+  margin: 0 0 14px;
+  color: #f8f6ef;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 25px;
+  font-weight: 500;
+}
+
+.confirmModal > p:not(.sectionEyebrow) {
+  color: #c0c3ce;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.confirmModal strong {
+  color: #f1d394;
+}
+
+.balanceAfter {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 19px 0;
+  padding: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  font-size: 12px !important;
+}
+
+.insufficientNotice {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 14px 0;
+  padding: 13px;
+  border: 1px solid rgba(228, 154, 126, 0.35);
+  border-radius: 5px;
+  background: rgba(173, 89, 64, 0.12);
+  color: #f1c4b1;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.insufficientNotice strong {
+  color: #f2b99f;
+  font-size: 13px;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.confirmActions > * {
+  flex: 1;
+}
+
+.cancelAction {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: transparent;
+}
+
+@media (min-width: 1600px) {
+  .carouselSection {
+    max-width: 1480px;
+  }
+}
+
+@media (max-width: 900px) {
+  .carouselSection {
+    padding-inline: 28px;
+  }
+
+  .inventoryGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .siteHeader,
+  .redeemHeader {
+    min-height: 66px;
+    padding: 10px 16px;
+    gap: 9px;
+  }
+
+  .brandMark {
+    gap: 5px;
+    font-size: 15px;
+  }
+
+  .brandMark span {
+    font-size: 9px;
+  }
+
+  .accountBalances {
+    gap: 6px;
+  }
+
+  .accountBalances > span {
+    min-height: 34px;
+    gap: 3px;
+    padding: 4px 7px;
+    font-size: 11px;
+  }
+
+  .accountBalances img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .accountBalances small {
+    font-size: 9px;
+  }
+
+  .carouselSection {
+    padding: 47px 0 35px 18px;
+  }
+
+  .sectionHeader {
+    margin: 0 18px 23px 0;
+  }
+
+  .sectionHeader h1 {
+    font-size: 36px;
+  }
+
+  .carouselContainer {
+    gap: 12px;
+    padding-right: 18px;
+  }
+
+  .gameCard {
+    width: min(76vw, 252px);
+    min-width: min(76vw, 252px);
+  }
+
+  .imageContainer {
+    aspect-ratio: 0.86;
+  }
+
+  .carouselFooter {
+    margin-right: 18px;
+  }
+
+  .carouselCount {
+    right: 0;
+  }
+
+  .swipeHint {
+    display: block;
+    margin-right: 18px;
+  }
+
+  .hubFooter {
+    flex-direction: column;
+    gap: 6px;
+    margin: 0 18px;
+    padding-top: 15px;
+    font-size: 11px;
+  }
+
+  .inventoryGrid {
+    grid-template-columns: 1fr;
+    gap: 11px;
+  }
+
+  .redeemHeader > .brandMark {
+    display: none;
+  }
+
+  .redeemHeader .backBtn {
+    min-height: 36px;
+    padding-inline: 8px;
+    font-size: 12px;
+  }
+
+  .balanceDisplay {
+    gap: 4px;
+  }
+
+  .balanceDisplay img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .balanceDisplay span {
+    font-size: 13px;
+  }
+
+  .redeemContent {
+    padding: 41px 18px 55px;
+  }
+
+  .redeemContent > h1 {
+    font-size: 31px;
+  }
+
+  .invCard {
+    padding: 16px;
+  }
+
+  .invCard h2 {
+    min-height: auto;
+  }
+
+  .historySection {
+    margin-top: 40px;
+  }
+
+  .historyList li {
+    font-size: 11px;
+  }
+
+  .historyList li > span {
+    gap: 5px;
+  }
+
+  .historyList time {
+    white-space: nowrap;
+  }
+
+  .confirmModal {
+    padding: 23px 19px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carouselContainer {
+    scroll-behavior: auto;
+  }
+
+  .shimmerEffect {
+    animation: none;
+  }
+
+  .gameCard,
+  .playNowBtn,
+  .dot {
+    transition: none;
+  }
+}
