@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { gamesData } from '../../data/gamesData';
 import { useGameCoins } from '../../context/useGameCoins';
@@ -10,9 +10,17 @@ const filters = ['All games', 'Playable', 'Coming soon'];
 export default function GamesCarousel() {
   const [activeFilter, setActiveFilter] = useState(filters[0]);
   const [search, setSearch] = useState('');
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
+  const [isInteracting, setIsInteracting] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const { tokens, gameCoins } = useGameCoins();
   const navigate = useNavigate();
-  const featuredGame = gamesData.find((game) => game.mode === 'shooter') || gamesData.find((game) => game.playable);
+  const viewportRef = useRef(null);
+  const groupRefs = useRef([]);
+  const interactionTimeoutRef = useRef(null);
+  const dragRef = useRef(null);
+  const featuredGame = gamesData.find((game) => game.playable);
 
   const visibleGames = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
@@ -27,6 +35,110 @@ export default function GamesCarousel() {
   }, [activeFilter, search]);
 
   const startGame = (game) => navigate(`/games/${game.route}`, { state: { game } });
+  const carouselGroups = visibleGames.length > 2 ? [0, 1, 2] : [0];
+
+  const pauseForInteraction = () => {
+    window.clearTimeout(interactionTimeoutRef.current);
+    setIsInteracting(true);
+    interactionTimeoutRef.current = window.setTimeout(() => setIsInteracting(false), 4500);
+  };
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return undefined;
+    const middleGroup = groupRefs.current[1];
+    viewport.scrollLeft = middleGroup ? middleGroup.offsetLeft : 0;
+    setActiveIndex(0);
+    return undefined;
+  }, [visibleGames]);
+
+  useEffect(() => () => window.clearTimeout(interactionTimeoutRef.current), []);
+
+  useEffect(() => {
+    if (isHovering || isInteracting || visibleGames.length < 3) return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+    const timer = window.setInterval(() => {
+      const viewport = viewportRef.current;
+      const cards = groupRefs.current[1]?.children;
+      if (!viewport || !cards || cards.length < 2) return;
+      const stride = cards[1].offsetLeft - cards[0].offsetLeft;
+      viewport.scrollTo({ left: viewport.scrollLeft + stride, behavior: 'smooth' });
+    }, 3600);
+
+    return () => window.clearInterval(timer);
+  }, [isHovering, isInteracting, visibleGames.length]);
+
+  const updateCarouselPosition = () => {
+    const viewport = viewportRef.current;
+    const firstGroup = groupRefs.current[0];
+    const middleGroup = groupRefs.current[1];
+    if (!viewport || !firstGroup || !middleGroup || visibleGames.length < 3) return;
+
+    const cycleWidth = middleGroup.offsetLeft - firstGroup.offsetLeft;
+    const cards = middleGroup.children;
+    if (!cycleWidth || cards.length < 2) return;
+
+    let position = viewport.scrollLeft;
+    if (position < cycleWidth * 0.5) {
+      position += cycleWidth;
+      viewport.scrollLeft = position;
+    } else if (position >= cycleWidth * 1.5) {
+      position -= cycleWidth;
+      viewport.scrollLeft = position;
+    }
+
+    const stride = cards[1].offsetLeft - cards[0].offsetLeft;
+    const nextIndex = Math.round((position - middleGroup.offsetLeft) / stride);
+    setActiveIndex(((nextIndex % visibleGames.length) + visibleGames.length) % visibleGames.length);
+  };
+
+  const goToGame = (index) => {
+    const viewport = viewportRef.current;
+    const middleGroup = groupRefs.current[1] || groupRefs.current[0];
+    const card = middleGroup?.children[index];
+    if (!viewport || !card) return;
+    pauseForInteraction();
+    viewport.scrollTo({ left: middleGroup.offsetLeft + card.offsetLeft, behavior: 'smooth' });
+  };
+
+  const handlePointerDown = (event) => {
+    pauseForInteraction();
+    if (event.pointerType !== 'mouse' || event.button !== 0
+      || event.target.closest('button, a, input')) return;
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      scrollLeft: event.currentTarget.scrollLeft,
+      moved: false
+    };
+    setIsDragging(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerMove = (event) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    const distance = event.clientX - drag.startX;
+    if (Math.abs(distance) > 4) drag.moved = true;
+    if (drag.moved) event.currentTarget.scrollLeft = drag.scrollLeft - distance;
+  };
+
+  const handlePointerUp = (event) => {
+    if (dragRef.current?.pointerId === event.pointerId) {
+      dragRef.current = null;
+      setIsDragging(false);
+    }
+    pauseForInteraction();
+  };
+
+  const handleWheel = (event) => {
+    if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+      event.preventDefault();
+      event.currentTarget.scrollLeft += event.deltaY;
+      pauseForInteraction();
+    }
+  };
 
   return (
     <main className={styles.gameHub}>
@@ -120,9 +232,62 @@ export default function GamesCarousel() {
           </div>
 
           {visibleGames.length > 0 ? (
-            <div className={styles.gamesGrid}>
-              {visibleGames.map((game, index) => <GameCard key={game.id} game={game} index={index} />)}
-            </div>
+            <>
+              <div
+                ref={viewportRef}
+                className={`${styles.carouselViewport} ${isDragging ? styles.carouselDragging : ''}`}
+                role="region"
+                aria-label="Game banners"
+                aria-roledescription="carousel"
+                onScroll={updateCarouselPosition}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                onWheel={handleWheel}
+                onMouseEnter={() => setIsHovering(true)}
+                onMouseLeave={() => setIsHovering(false)}
+                onFocusCapture={() => setIsHovering(true)}
+                onBlurCapture={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget)) setIsHovering(false);
+                }}
+              >
+                <div className={styles.carouselTrack}>
+                  {carouselGroups.map((group) => (
+                    <div
+                      className={styles.carouselSet}
+                      key={`carousel-set-${group}`}
+                      aria-hidden={carouselGroups.length > 1 && group !== 1}
+                      ref={(node) => { groupRefs.current[group] = node; }}
+                    >
+                      {visibleGames.map((game, index) => (
+                        <GameCard
+                          key={`${group}-${game.id}`}
+                          game={game}
+                          index={index}
+                          isClone={carouselGroups.length > 1 && group !== 1}
+                        />
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.carouselFooter}>
+                <span className={styles.carouselHint}>Swipe, drag or scroll to explore · Auto-playing</span>
+                <div className={styles.carouselIndicators} aria-label="Choose a game">
+                  {visibleGames.map((game, index) => (
+                    <button
+                      key={game.id}
+                      type="button"
+                      className={`${styles.carouselDot} ${activeIndex === index ? styles.activeCarouselDot : ''}`}
+                      aria-label={`Show ${game.name}`}
+                      aria-current={activeIndex === index ? 'true' : undefined}
+                      onClick={() => goToGame(index)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
           ) : (
             <div className={styles.emptySearch}>
               <span aria-hidden="true">⌕</span>

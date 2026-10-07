@@ -6,7 +6,7 @@ export const gamesData = [
   { id: 5, name: "Slice Storm", image: "/assets/games/game-05.avif", cost: 20, playable: false, route: "slice-storm", description: "Slice fruit in quick combos and keep clear of the hazards." },
   { id: 6, name: "Cosmo Warrior", image: "/assets/games/game-06.avif", cost: 20, playable: false, route: "cosmo-warrior", description: "Pilot through incoming waves, line up your shot, and protect the galaxy." },
   { id: 7, name: "Toilet Tactics", image: "/assets/games/game-07.avif", cost: 20, playable: false, route: "toilet-tactics", description: "Defend the city from a chaotic wave of invaders." },
-  { id: 8, name: "Word Hunt", image: "/assets/games/game-08.avif", cost: 20, playable: true, mode: "wordhunt", route: "word-hunt", description: "Link neighboring letters to find as many words as you can before time runs out." },
+  { id: 8, name: "Word Hunt", image: "/assets/games/game-08.avif", cost: 20, playable: true, mode: "wordhunt", route: "word-hunt", description: "Find eight hidden words by linking neighboring letters before time runs out." },
   { id: 9, name: "Bubble Blast Legend", image: "/assets/games/game-09.avif", cost: 20, playable: false, route: "bubble-blast-legend", description: "Line up colorful bubbles, clear clusters, and beat each level." },
   { id: 10, name: "Merge Master", image: "/assets/games/game-10.avif", cost: 20, playable: true, mode: "merge", route: "merge-master", description: "Slide matching tiles together, build combos, and reach the legendary 2048 tile." },
   { id: 11, name: "Wormzy", image: "/assets/games/game-11.avif", cost: 20, playable: false, route: "wormzy", description: "Guide Wormzy through a block puzzle to reach the apple." },

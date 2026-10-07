@@ -7,18 +7,29 @@ https://veloop-games-i5zy9jrov-rajsingh8879-7203.vercel.app
 
 ## Features
 
-- 13 reusable game cards generated from structured data and AVIF artwork
+- 13 artwork-led game banners generated from structured data and AVIF artwork
+- Automatically scrolling horizontal carousel with seamless looping, touch/trackpad scrolling, mouse drag, wheel support, and game dots
+- Carousel pauses for hover, keyboard focus, and direct interaction, and respects reduced-motion preferences
 - Searchable, filterable game library with a featured challenge and responsive arcade layout
-- Token-based entry requirement set to 20 Tokens per playable challenge
+- Every banner communicates its 20 Token entry cost; unreleased games are clearly marked as coming soon
 - Two playable puzzle games:
-  - Word Hunt: timed adjacent-letter word search with a dictionary, word scoring, and duplicate protection
-  - Merge Master: timed 2048-style puzzle with keyboard, WASD, swipe, and on-screen direction controls
-- Bowlexa and Cosmo Warrior remain visible as coming-soon games
-- First-time guide/tutorial flow before gameplay starts
+  - Word Hunt: 90-second, 8 × 8 word search with eight placed target words, tap or drag selection in every direction, scoring, and duplicate protection
+  - Merge Master: untimed 2048 puzzle with keyboard, WASD, pointer swipe, and on-screen direction controls; reaching 2048 does not stop play
+- First-time guide/tutorial flow before gameplay starts, with a replayable guide on each game home page
 - Score-based Game Coin rewards, per-game personal bests, and completed-round counts
+- Working one-time revive, round completion, and immediate centralized Game Coin balance updates
 - Centralized balances, game records, guides, and redemption history persisted in browser storage
 - Redemption section for converting Game Coins into VEs, SVEs, Gems, Tokens, and Spins
-- Responsive layout for mobile, tablet, and desktop devices
+- Responsive layout and touch-sized controls for 320px+ mobile, tablet, laptop, and desktop screens
+
+## Gameplay design references
+
+Play Store references reviewed during implementation:
+
+- [Word Search - Word Puzzle Game (Bluetile)](https://play.google.com/store/apps/details?id=com.playvalve.wsjourney)
+- [2048 (Ketchapp)](https://play.google.com/store/apps/details?id=com.ketchapp.play2048)
+
+The game screens use familiar, easy-to-learn puzzle conventions while keeping the supplied VELOOP artwork and rewards flow. The Play Store listings are design references only; this web prototype does not install or embed either app.
 
 ## Tech Stack
 
@@ -96,7 +107,7 @@ npm run lint
 
 ## Notes
 
-This project is a frontend prototype. The app uses local browser storage to simulate account balances, game records, and reward persistence for demo purposes. A production version would require backend integration for authentication, real token validation, and secure balance updates.
+This project is a frontend prototype. The app uses local browser storage to simulate account balances, game records, and reward persistence for demo purposes. Only Word Hunt and Merge Master are playable; the other 11 banners are presented as coming soon. A production version would require backend integration for authentication, real token validation, and secure balance updates.
 
 ## Deployment
 

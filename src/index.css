@@ -1,7 +1,7 @@
 :root {
   font-family: 'Aptos', 'Trebuchet MS', sans-serif;
   color: #f4f1e9;
-  background: #101116;
+  background: #161827;
   color-scheme: dark;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -45,6 +45,6 @@ img {
 }
 
 ::selection {
-  background: #c9ff70;
-  color: #101116;
+  background: #d7bd82;
+  color: #161827;
 }

@@ -548,7 +548,7 @@
 
   .gameIllustrationBox {
     min-height: 0;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0;
     padding: 13px;
   }
@@ -558,7 +558,13 @@
   }
 
   .gameArtwork {
-    height: clamp(150px, 46vw, 225px);
+    width: min(100%, 340px);
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 1054 / 1253;
+    margin: 0 auto;
+    padding: 0;
+    object-fit: contain;
   }
 
   .gameIntro {
@@ -673,7 +679,7 @@
 .wordBoard {
   width: min(100%, 390px);
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--word-grid-size), minmax(0, 1fr));
   gap: 9px;
   padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.11);
@@ -785,6 +791,31 @@
   font-size: 10px;
 }
 
+.wordTargetList {
+  width: min(100%, 390px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.wordTargetList > span {
+  padding: 5px 8px;
+  border: 1px solid rgba(167, 122, 60, 0.23);
+  border-radius: 999px;
+  background: rgba(167, 122, 60, 0.06);
+  color: #77736b;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+}
+
+.wordTargetList > .wordTargetFound {
+  border-color: rgba(81, 128, 79, 0.32);
+  background: rgba(81, 128, 79, 0.12);
+  color: #3e7042;
+}
+
 .mergePlayfield {
   gap: 13px;
   touch-action: none;
@@ -800,6 +831,35 @@
 
 .mergeHint strong {
   color: var(--play-accent);
+}
+
+.mergeWinBanner {
+  width: min(100%, 430px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(112, 133, 66, 0.28);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #43523a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mergeWinBanner button {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid #9eb56e;
+  border-radius: 8px;
+  background: #dce9bf;
+  color: #344524;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .mergeBoard {
@@ -1043,8 +1103,8 @@
 
 .gameIllustrationBox {
   position: relative;
-  min-height: 360px;
-  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.8fr);
+  min-height: 540px;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
   border-color: rgba(255, 255, 255, 0.12);
   border-radius: 17px;
   background: #1a1b22;
@@ -1052,7 +1112,13 @@
 }
 
 .gameArtwork {
-  min-height: 360px;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 10px;
+  aspect-ratio: 1054 / 1253;
+  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.08), transparent 72%);
+  object-fit: contain;
   object-position: center;
 }
 
@@ -1770,5 +1836,726 @@
     min-height: 340px;
     gap: 17px;
     padding-inline: 22px;
+  }
+}
+
+.lightThemeContainer {
+  --play-accent: #b48a4d;
+  --play-accent-soft: rgba(180, 138, 77, 0.14);
+  color-scheme: light;
+  min-height: 100svh;
+  color: #20232d;
+  background:
+    radial-gradient(ellipse at 82% 0%, rgba(199, 181, 137, 0.12), transparent 32%),
+    #f5f4f0;
+  font-family: 'Aptos', 'Trebuchet MS', sans-serif;
+}
+
+.wordHuntTheme {
+  --play-accent: #a77a3c;
+  --play-accent-soft: rgba(167, 122, 60, 0.14);
+}
+
+.mergeTheme {
+  --play-accent: #6c7fae;
+  --play-accent-soft: rgba(108, 127, 174, 0.14);
+}
+
+.topHeader {
+  min-height: 72px;
+  border-color: #e3e1db;
+  background: rgba(252, 251, 248, 0.92);
+  box-shadow: 0 4px 18px rgba(41, 41, 34, 0.035);
+}
+
+.backBtn {
+  border-color: #e2dfd7;
+  background: #fff;
+  color: #343844;
+}
+
+.backBtn:hover {
+  border-color: #cfc9bb;
+  background: #f9f8f4;
+}
+
+.tokenBalanceBadge {
+  border-color: #e4e0d5;
+  background: #fff;
+  color: #666a72;
+}
+
+.tokenBalanceBadge strong {
+  color: #272a33;
+}
+
+.coinBalanceBadge {
+  border-color: rgba(180, 138, 77, 0.28);
+  background: #fbf6e9;
+  color: #66532f;
+}
+
+.homeContent {
+  width: min(100% - 40px, 1120px);
+  gap: 18px;
+  margin: 30px auto 36px;
+}
+
+.gameIllustrationBox {
+  min-height: 540px;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  border-color: #e2dfd7;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 18px 42px rgba(37, 39, 41, 0.08);
+}
+
+.gameArtwork {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 10px;
+  aspect-ratio: 1054 / 1253;
+  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.08), transparent 72%);
+  object-fit: contain;
+  object-position: center;
+}
+
+.gameIntro {
+  justify-content: center;
+  padding: clamp(24px, 4vw, 48px);
+  background:
+    radial-gradient(circle at 100% 0%, var(--play-accent-soft), transparent 42%),
+    linear-gradient(150deg, #fff, #f8f7f3);
+}
+
+.gameIntro h1 {
+  color: #242631;
+  font-family: 'Aptos', 'Trebuchet MS', sans-serif;
+  font-size: clamp(2.3rem, 4.4vw, 4rem);
+  font-weight: 780;
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+
+.eyebrow {
+  color: var(--play-accent);
+}
+
+.gameIntro > p:last-child {
+  max-width: 360px;
+  color: #69707a;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.personalRecord {
+  border-color: #e8e3d5;
+  background: linear-gradient(105deg, #fcfaf4, #fff);
+}
+
+.personalRecord > div > span {
+  color: #777b84;
+}
+
+.personalRecord > div > strong {
+  color: #272a34;
+}
+
+.personalRecord > div:first-child > strong {
+  color: var(--play-accent);
+}
+
+.recordSpark {
+  color: var(--play-accent);
+}
+
+.entryPanel,
+.howToPlaySection {
+  border-color: #e4e1d9;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(37, 39, 41, 0.035);
+}
+
+.entryPanel {
+  padding: 18px 22px;
+}
+
+.entryCost {
+  color: #282b34;
+}
+
+.primaryAction {
+  border-color: #d8c397;
+  background: linear-gradient(135deg, #e8d8b1, #cfb77f);
+  color: #25252c;
+  box-shadow: 0 8px 18px rgba(163, 132, 77, 0.16);
+}
+
+.primaryAction:hover {
+  filter: brightness(1.035);
+  box-shadow: 0 11px 23px rgba(163, 132, 77, 0.22);
+}
+
+.secondaryAction {
+  border-color: #dcd9d1;
+  background: #fff;
+  color: #474b55;
+}
+
+.secondaryAction:hover {
+  background: #f8f7f3;
+}
+
+.notice {
+  border-color: #ead3b8;
+  border-radius: 12px;
+}
+
+.rewardNotice {
+  border-color: #d6e0d0;
+  border-radius: 12px;
+  background: #f2f7ef;
+  color: #426342;
+}
+
+.howToPlaySection {
+  gap: 14px 28px;
+  padding: 23px;
+}
+
+.howToPlaySection h2 {
+  color: #292c36;
+  font-family: 'Aptos', 'Trebuchet MS', sans-serif;
+  font-size: 21px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.howToPlaySection > p {
+  color: #6b7079;
+  line-height: 1.7;
+}
+
+.rewardSummary {
+  color: #765e34;
+}
+
+.guideAgain {
+  grid-column: 1 / -1;
+  justify-self: end;
+  padding: 8px 12px;
+  border: 1px solid #e6e1d5;
+  border-radius: 8px;
+  background: #faf9f5;
+  color: #686b73;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.guideAgain:hover {
+  border-color: #d3c29e;
+  background: #fbf6e9;
+  color: #58472b;
+}
+
+.guideAgain:focus-visible {
+  outline: 2px solid var(--play-accent);
+  outline-offset: 3px;
+}
+
+.activePlayArea {
+  width: min(100% - 40px, 800px);
+  min-height: min(70svh, 700px);
+  margin: 26px auto 22px;
+  border-color: #e0ddd5;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 18px 48px rgba(37, 39, 41, 0.1);
+}
+
+.gameHud {
+  min-height: 66px;
+  border-color: #e9e6de;
+  background: #fff;
+  color: #777b84;
+}
+
+.gameHud strong {
+  color: #292c36;
+}
+
+.timeWarning,
+.timeWarning strong {
+  color: #b35d4b !important;
+}
+
+.wordPlayfield,
+.mergePlayfield {
+  min-height: 480px;
+  gap: 17px;
+  padding: 26px;
+}
+
+.wordPlayfield {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(210, 188, 142, 0.27), transparent 55%),
+    linear-gradient(145deg, #f5f1e7, #eeebe3);
+}
+
+.wordGameHeader {
+  color: #78776f;
+}
+
+.wordGameHeader span:last-child {
+  color: var(--play-accent);
+}
+
+.wordProgress {
+  width: min(100%, 520px);
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(167, 122, 60, 0.14);
+}
+
+.wordProgress > span {
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #a77a3c, #e0bd79);
+  transition: width 220ms ease;
+}
+
+.wordBoard {
+  width: min(100%, 520px);
+  gap: 9px;
+  padding: 12px;
+  border-color: #e1dacb;
+  border-radius: 20px;
+  background: #e6dfd1;
+  box-shadow: 0 16px 34px rgba(83, 67, 41, 0.13);
+  touch-action: none;
+  user-select: none;
+}
+
+.wordCell {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  line-height: 1;
+  font-size: clamp(16px, 3.2vw, 27px);
+  border-color: #f5f0e6;
+  border-radius: 12px;
+  background: linear-gradient(155deg, #fffefa, #f5f1e8);
+  color: #37362f;
+  box-shadow: inset 0 1px 0 #fff, 0 3px 8px rgba(81, 70, 49, 0.09);
+  touch-action: none;
+  user-select: none;
+}
+
+.wordCell:hover {
+  border-color: rgba(167, 122, 60, 0.55);
+}
+
+.selectedWordCell {
+  border-color: #b58a4f;
+  background: linear-gradient(150deg, #dfc892, #c5a56a);
+  color: #2e2c27;
+  box-shadow: 0 0 0 2px rgba(181, 138, 79, 0.16), 0 5px 12px rgba(121, 91, 45, 0.16);
+}
+
+.wordComposerText {
+  color: #34353b;
+}
+
+.wordClear,
+.wordSubmit {
+  min-height: 40px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.wordClear {
+  padding: 0 12px;
+  border: 1px solid #ddd8cc;
+  background: #faf9f5;
+  color: #666a71;
+}
+
+.wordClear:disabled {
+  color: #afb0b2;
+  cursor: default;
+}
+
+.wordSubmit {
+  border-color: #c3a66d;
+  background: #d9c18e;
+  color: #302b22;
+}
+
+.wordSubmit:disabled {
+  border-color: #e2ded4;
+  background: #eeece6;
+  color: #9a9a98;
+}
+
+.wordClear:focus-visible,
+.wordSubmit:focus-visible,
+.wordCell:focus-visible {
+  outline: 2px solid var(--play-accent);
+  outline-offset: 3px;
+}
+
+.wordMessage {
+  color: #74736e;
+  font-size: 11px;
+}
+
+.foundWordList > span:not(.foundPlaceholder) {
+  border-color: rgba(167, 122, 60, 0.23);
+  background: rgba(167, 122, 60, 0.09);
+  color: #72562f;
+  font-size: 10px;
+}
+
+.foundWordList .foundPlaceholder {
+  color: #898880;
+}
+
+.mergePlayfield {
+  background:
+    radial-gradient(ellipse at 50% 4%, rgba(139, 154, 191, 0.25), transparent 55%),
+    linear-gradient(145deg, #e9ebf2, #dfe2eb);
+  touch-action: none;
+  user-select: none;
+}
+
+.mergeHint,
+.mergeKeyboardHint {
+  color: #6c7180;
+}
+
+.mergeBoard {
+  width: min(100%, 430px);
+  gap: 9px;
+  padding: 11px;
+  border-color: #cbd0dd;
+  border-radius: 19px;
+  background: #b9c0d1;
+  box-shadow: 0 16px 36px rgba(57, 66, 91, 0.16);
+}
+
+.mergeTile {
+  border-color: rgba(255, 255, 255, 0.2);
+  border-radius: 11px;
+  color: #f8f7f3;
+  font-size: clamp(17px, 4.4vw, 29px);
+}
+
+.mergeTileTarget {
+  color: #292b34;
+  box-shadow: 0 0 20px rgba(197, 171, 107, 0.32);
+}
+
+.mergeControls button {
+  width: 43px;
+  height: 40px;
+  border-color: #cbd0dd;
+  border-radius: 10px;
+  background: #fff;
+  color: #444a5a;
+  box-shadow: 0 3px 8px rgba(57, 66, 91, 0.08);
+}
+
+.mergeControls button:hover {
+  border-color: var(--play-accent);
+  background: #f8f8fb;
+}
+
+.mergeControls button:focus-visible {
+  outline: 2px solid var(--play-accent);
+  outline-offset: 3px;
+}
+
+.modalOverlay {
+  background: rgba(28, 30, 39, 0.48);
+  backdrop-filter: blur(7px);
+}
+
+.guideModal,
+.gameOverModal {
+  gap: 15px;
+  padding: 30px;
+  border-color: #e8e5de;
+  border-radius: 18px;
+  background: #fffefa;
+  box-shadow: 0 28px 76px rgba(23, 26, 34, 0.24);
+  animation: modalIn 220ms ease both;
+}
+
+.guideModal h2,
+.gameOverModal h2 {
+  color: #282b34;
+  font-family: 'Aptos', 'Trebuchet MS', sans-serif;
+  font-size: 30px;
+  font-weight: 780;
+  letter-spacing: -0.04em;
+}
+
+.guideModal > p:not(.eyebrow),
+.gameOverModal > p:not(.eyebrow) {
+  color: #6a7079;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.guideMeta {
+  color: var(--play-accent) !important;
+}
+
+.finalScore {
+  border-color: #e9e6df;
+}
+
+.finalScore strong {
+  color: #292c36;
+}
+
+.previousBest {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.previousBest strong {
+  color: #393c45;
+  font-variant-numeric: tabular-nums;
+}
+
+.newRecord {
+  color: #967239 !important;
+  font-weight: 800;
+}
+
+.gameOverModal .rewardSummary {
+  padding: 12px;
+  border: 1px solid #e9e1cd;
+  border-radius: 10px;
+  background: #fbf7eb;
+}
+
+.bottomNav {
+  z-index: 3;
+  border-color: #e3e0d8;
+  background: rgba(252, 251, 248, 0.94);
+  box-shadow: 0 -5px 18px rgba(37, 39, 41, 0.035);
+}
+
+.bottomNav button {
+  min-height: 42px;
+  border-radius: 9px;
+  color: #737780;
+}
+
+.bottomNav .activeNavItem {
+  background: #eee9dc;
+  color: #51452f;
+}
+
+.errorPanel {
+  border-color: #e5e1d8;
+  border-radius: 17px;
+  background: #fffefa;
+  box-shadow: 0 16px 44px rgba(37, 39, 41, 0.09);
+}
+
+.errorPanel h1 {
+  color: #292c36;
+}
+
+.errorPanel > p:not(.eyebrow) {
+  color: #6c7078;
+}
+
+@media (max-width: 700px) {
+  .topHeader {
+    min-height: 62px;
+    padding: 9px 13px;
+  }
+
+  .headerBalances {
+    gap: 5px;
+  }
+
+  .tokenBalanceBadge {
+    gap: 5px;
+    padding: 5px 8px 5px 6px;
+    font-size: 10px;
+  }
+
+  .coinBalanceBadge {
+    gap: 5px;
+    padding: 5px 8px 5px 6px;
+    font-size: 10px;
+  }
+
+  .miniCoin {
+    width: 21px;
+    height: 21px;
+  }
+
+  .homeContent {
+    width: calc(100% - 28px);
+    gap: 12px;
+    margin: 17px auto 24px;
+  }
+
+  .gameIllustrationBox {
+    min-height: 0;
+    grid-template-columns: 1fr;
+    border-radius: 16px;
+  }
+
+  .gameArtwork {
+    width: min(100%, 340px);
+    height: auto;
+    min-height: 0;
+    margin: 0 auto;
+    padding: 0;
+    aspect-ratio: 1054 / 1253;
+    object-fit: contain;
+  }
+
+  .gameIntro {
+    padding: 20px;
+  }
+
+  .gameIntro h1 {
+    font-size: clamp(2rem, 9vw, 2.8rem);
+  }
+
+  .gameIntro > p:last-child {
+    font-size: 13px;
+  }
+
+  .entryPanel {
+    padding: 14px;
+  }
+
+  .howToPlaySection {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 17px;
+  }
+
+  .guideAgain {
+    grid-column: auto;
+    justify-self: stretch;
+    min-height: 40px;
+  }
+
+  .activePlayArea {
+    width: calc(100% - 20px);
+    min-height: 0;
+    margin: 12px auto;
+    border-radius: 16px;
+  }
+
+  .gameHud {
+    min-height: 56px;
+    gap: 8px;
+    padding: 8px 12px;
+    font-size: 10px;
+  }
+
+  .gameHud strong {
+    font-size: 15px;
+  }
+
+  .wordPlayfield,
+  .mergePlayfield {
+    min-height: 0;
+    gap: 12px;
+    padding: 16px 12px;
+  }
+
+  .wordBoard,
+  .mergeBoard {
+    width: min(100%, 390px);
+    gap: 7px;
+    padding: 9px;
+  }
+
+  .wordCell {
+    border-radius: 9px;
+  }
+
+  .wordComposer {
+    gap: 6px;
+  }
+
+  .wordComposerText {
+    min-width: 0;
+    flex: 1;
+    font-size: 13px;
+  }
+
+  .wordClear,
+  .wordSubmit {
+    min-height: 39px;
+    padding-inline: 9px;
+    font-size: 10px;
+  }
+
+  .wordMessage,
+  .foundWordList {
+    width: min(100%, 390px);
+  }
+
+  .mergeTile {
+    border-radius: 8px;
+  }
+
+  .guideModal,
+  .gameOverModal {
+    padding: 23px 19px;
+  }
+
+  .bottomNav {
+    padding-inline: 8px;
+  }
+}
+
+@media (max-width: 360px) {
+  .homeContent {
+    width: calc(100% - 20px);
+  }
+
+  .entryPanel {
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 10px;
+  }
+
+  .entryPanel .primaryAction {
+    padding-inline: 10px;
+    font-size: 10px;
+  }
+
+  .wordBoard,
+  .mergeBoard {
+    gap: 5px;
+    padding: 7px;
+  }
+
+  .gameHud {
+    gap: 4px;
+    padding-inline: 8px;
   }
 }

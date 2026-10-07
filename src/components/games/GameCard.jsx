@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGameCoins } from '../../context/useGameCoins';
 import styles from '../../styles/Games.module.css';
 
-export default function GameCard({ game, index = 0 }) {
+export default function GameCard({ game, index = 0, isClone = false }) {
   const navigate = useNavigate();
   const { tokens } = useGameCoins();
   const hasEntryTokens = tokens >= game.cost;
@@ -24,6 +24,7 @@ export default function GameCard({ game, index = 0 }) {
         type="button"
         onClick={handlePlayClick}
         disabled={!game.playable}
+        tabIndex={isClone ? -1 : undefined}
         aria-label={game.playable ? `View ${game.name}` : `${game.name}, coming soon`}
       >
         <img src={game.image} alt="" loading="lazy" />
@@ -43,17 +44,20 @@ export default function GameCard({ game, index = 0 }) {
             <img src="/assets/tokens/multi_token.png" alt="" />
             <strong>{game.cost}</strong> tokens
           </span>
-          {game.playable ? (
-            <button
-              className={styles.playNowBtn}
-              onClick={handlePlayClick}
-              aria-label={hasEntryTokens ? `Play ${game.name}` : `Get tokens to play ${game.name}`}
-            >
-              {hasEntryTokens ? 'Play' : 'Get tokens'} <span aria-hidden="true">→</span>
-            </button>
-          ) : (
-            <span className={styles.waitlistLabel}>In the works <span aria-hidden="true">✦</span></span>
-          )}
+          <button
+            className={styles.playNowBtn}
+            onClick={handlePlayClick}
+            disabled={!game.playable}
+            tabIndex={isClone ? -1 : undefined}
+            aria-label={!game.playable
+              ? `${game.name} is coming soon`
+              : hasEntryTokens ? `Play ${game.name}` : `Get tokens to play ${game.name}`}
+          >
+            <span className={styles.playNowLabel}>
+              {!game.playable ? 'Coming soon' : hasEntryTokens ? 'Play now' : 'Get tokens'}
+            </span>
+            <span aria-hidden="true">{game.playable ? '→' : '✦'}</span>
+          </button>
         </div>
       </div>
     </article>
