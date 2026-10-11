@@ -1,30 +1,29 @@
 export const storageKey = 'veloop-game-account';
 
-export const createInitialAccount = () => {
-  const fallback = {
-    tokens: 150,
-    gameCoins: 40,
-    userInventory: { VEs: 10, SVEs: 5, Gems: 50, Tokens: 150, Spins: 2 },
-    seenGuides: {},
-    redemptionHistory: [],
-    gameRecords: {}
-  };
+export const DEFAULT_ACCOUNT = {
+  tokens: 200,
+  gameCoins: 200,
+  userInventory: { VEs: 10, SVEs: 5, Gems: 50, Tokens: 200, Spins: 2 },
+  seenGuides: {},
+  redemptionHistory: [],
+  gameRecords: {}
+};
+
+export const getDefaultAccount = () => ({
+  ...DEFAULT_ACCOUNT,
+  userInventory: { ...DEFAULT_ACCOUNT.userInventory }
+});
+
+export const resetAccountToDefault = () => {
+  const resetAccount = getDefaultAccount();
 
   try {
-    const saved = JSON.parse(localStorage.getItem(storageKey));
-    if (!saved) return fallback;
-    const tokens = saved.tokens ?? fallback.tokens;
-
-    return {
-      ...fallback,
-      ...saved,
-      tokens,
-      userInventory: { ...fallback.userInventory, ...saved.userInventory, Tokens: tokens },
-      seenGuides: saved.seenGuides || {},
-      redemptionHistory: saved.redemptionHistory || [],
-      gameRecords: saved.gameRecords || {}
-    };
+    localStorage.setItem(storageKey, JSON.stringify(resetAccount));
   } catch {
-    return fallback;
+    // Ignore localStorage write failures and still return the reset state.
   }
+
+  return resetAccount;
 };
+
+export const createInitialAccount = () => resetAccountToDefault();
