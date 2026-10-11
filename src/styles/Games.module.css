@@ -224,6 +224,189 @@
   font-size: 10px;
 }
 
+.playerDashboard {
+  margin-top: 12px;
+  padding: 20px 20px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  background: rgba(18, 19, 25, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  animation: riseIn 600ms 90ms both;
+}
+
+.leaderboardPanel,
+.rewardsSpotlight {
+  margin-top: 22px;
+  padding: 20px 20px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  background: rgba(18, 19, 25, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  animation: riseIn 700ms 120ms both;
+}
+
+.dashboardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dashboardHeader h2 {
+  margin: 0;
+  color: #f5f1ec;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.dashboardBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 10px;
+  border: 1px solid rgba(201, 255, 112, 0.2);
+  border-radius: 999px;
+  background: rgba(201, 255, 112, 0.08);
+  color: var(--accent);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.summaryStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.statCard {
+  display: grid;
+  gap: 4px;
+  padding: 16px 16px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.statCard span {
+  color: #999bab;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.statCard strong {
+  color: #f5f2ee;
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.statCard small {
+  color: #a3a5b0;
+  font-size: 11px;
+}
+
+.progressList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.progressItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease;
+}
+
+.progressItem:hover {
+  transform: translateY(-2px);
+  border-color: rgba(201, 255, 112, 0.28);
+}
+
+.progressThumb {
+  width: 46px;
+  height: 46px;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #20222b;
+}
+
+.progressThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.progressCopy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.progressCopy span {
+  color: #f1efe9;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.progressCopy small {
+  color: #9ca0ac;
+  font-size: 10px;
+}
+
+.progressItem strong {
+  color: var(--accent);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.emptyProgress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 120px;
+  margin-top: 16px;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  color: #9ea2af;
+  text-align: center;
+}
+
+.emptyProgress strong {
+  color: #f2efe8;
+  font-size: 14px;
+}
+
+.emptyProgress p {
+  margin: 0;
+  max-width: 430px;
+  font-size: 11px;
+}
+
 .featuredGame {
   position: relative;
   min-height: 500px;
@@ -235,6 +418,7 @@
   border-radius: 20px;
   background: #242333;
   animation: riseIn 650ms 60ms both;
+  box-shadow: 0 24px 60px rgba(11, 13, 18, 0.35);
 }
 
 .featuredArtwork,
@@ -499,13 +683,15 @@
   border-radius: 14px;
   background: linear-gradient(145deg, #1c1d24, #17181e);
   animation: riseIn 430ms calc(var(--card-order, 0) * 35ms) both;
-  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+  will-change: transform;
 }
 
 .gameCard:hover {
-  transform: translateY(-4px);
-  border-color: rgba(201, 255, 112, 0.3);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+  transform: translateY(-6px) scale(1.01);
+  border-color: rgba(201, 255, 112, 0.32);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.24);
+  filter: brightness(1.03);
 }
 
 .cardArtwork {
@@ -739,6 +925,106 @@
   font: inherit;
   font-size: 11px;
   font-weight: 750;
+  cursor: pointer;
+}
+
+.leaderboardList {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.leaderRow {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.leaderRank {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.leaderMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.leaderMeta strong {
+  color: #f2efe9;
+  font-size: 13px;
+}
+
+.leaderMeta span {
+  color: #9ea2af;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.leaderScore {
+  color: #f8f5efff;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.rewardsSpotlight {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.rewardsSpotlight h2 {
+  margin: 0;
+  color: #f3efe8;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(24px, 2.6vw, 32px);
+  letter-spacing: -0.03em;
+}
+
+.rewardsDetails {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rewardsDetails > div {
+  display: grid;
+  gap: 2px;
+  min-width: 100px;
+}
+
+.rewardsDetails span {
+  color: #9ea2af;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.rewardsDetails strong {
+  color: var(--accent);
+  font-size: 26px;
+  font-variant-numeric: tabular-nums;
+}
+
+.rewardsDetails button {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #171a12;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
   cursor: pointer;
 }
 

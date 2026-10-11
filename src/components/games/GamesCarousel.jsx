@@ -14,13 +14,37 @@ export default function GamesCarousel() {
   const [isHovering, setIsHovering] = useState(false);
   const [isInteracting, setIsInteracting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const { tokens, gameCoins } = useGameCoins();
+  const { tokens, gameCoins, gameRecords } = useGameCoins();
   const navigate = useNavigate();
   const viewportRef = useRef(null);
   const groupRefs = useRef([]);
   const interactionTimeoutRef = useRef(null);
   const dragRef = useRef(null);
   const featuredGame = gamesData.find((game) => game.playable);
+
+  const playerSummary = useMemo(() => {
+    const records = Object.values(gameRecords || {});
+    const totalRounds = records.reduce((sum, entry) => sum + (entry.roundsPlayed || 0), 0);
+    const bestScore = records.reduce((best, entry) => Math.max(best, entry.bestScore || 0), 0);
+    const bestGames = gamesData
+      .map((game) => ({
+        ...game,
+        bestScore: gameRecords[game.route]?.bestScore || 0,
+        roundsPlayed: gameRecords[game.route]?.roundsPlayed || 0
+      }))
+      .filter((game) => game.bestScore > 0 || game.roundsPlayed > 0)
+      .sort((left, right) => (right.bestScore + right.roundsPlayed * 20) - (left.bestScore + left.roundsPlayed * 20))
+      .slice(0, 3);
+
+    return { totalRounds, bestScore, bestGames };
+  }, [gameRecords]);
+
+  const leaderboard = [
+    { name: 'Astra', score: 14820, badge: 'Legend' },
+    { name: 'Nova', score: 13640, badge: 'Elite' },
+    { name: 'You', score: playerSummary.bestScore || 0, badge: 'Current' },
+    { name: 'Kai', score: 12290, badge: 'Rising' }
+  ].sort((left, right) => right.score - left.score).slice(0, 4);
 
   const visibleGames = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
@@ -172,6 +196,61 @@ export default function GamesCarousel() {
           </div>
         </section>
 
+        <section className={styles.playerDashboard} aria-label="Player dashboard">
+          <div className={styles.dashboardHeader}>
+            <div>
+              <p className={styles.sectionEyebrow}>PLAYER STATUS</p>
+              <h2>Arcade momentum</h2>
+            </div>
+            <span className={styles.dashboardBadge}>Live progress</span>
+          </div>
+
+          <div className={styles.summaryStats}>
+            <div className={styles.statCard}>
+              <span>Total rounds</span>
+              <strong>{playerSummary.totalRounds}</strong>
+              <small>Across every session</small>
+            </div>
+            <div className={styles.statCard}>
+              <span>Best score</span>
+              <strong>{playerSummary.bestScore}</strong>
+              <small>Highest milestone</small>
+            </div>
+            <div className={styles.statCard}>
+              <span>Wallet</span>
+              <strong>{gameCoins}</strong>
+              <small>Game coins ready</small>
+            </div>
+          </div>
+
+          {playerSummary.bestGames.length > 0 ? (
+            <div className={styles.progressList} aria-label="Best scored games">
+              {playerSummary.bestGames.map((game) => (
+                <button
+                  key={game.route}
+                  type="button"
+                  className={styles.progressItem}
+                  onClick={() => startGame(game)}
+                >
+                  <div className={styles.progressThumb}>
+                    <img src={game.image} alt="" />
+                  </div>
+                  <div className={styles.progressCopy}>
+                    <span>{game.name}</span>
+                    <small>{game.roundsPlayed} rounds played</small>
+                  </div>
+                  <strong>{game.bestScore}</strong>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.emptyProgress}>
+              <strong>No wins yet</strong>
+              <p>Jump into a playable game and your best runs will appear here.</p>
+            </div>
+          )}
+        </section>
+
         {featuredGame && (
           <section className={styles.featuredGame} aria-label="Featured game">
             <img className={styles.featuredArtwork} src={featuredGame.image} alt="" />
@@ -192,6 +271,43 @@ export default function GamesCarousel() {
             <div className={styles.featuredIndex} aria-hidden="true">01 <span>/ ARCADE PICK</span></div>
           </section>
         )}
+
+        <section className={styles.leaderboardPanel} aria-labelledby="leaderboard-title">
+          <div className={styles.libraryHeading}>
+            <div>
+              <p className={styles.sectionEyebrow}>TOP PLAYERS</p>
+              <h2 id="leaderboard-title">Leaderboards</h2>
+            </div>
+            <span className={styles.dashboardBadge}>This week</span>
+          </div>
+
+          <div className={styles.leaderboardList}>
+            {leaderboard.map((entry, index) => (
+              <div key={entry.name} className={styles.leaderRow}>
+                <div className={styles.leaderRank}>#{index + 1}</div>
+                <div className={styles.leaderMeta}>
+                  <strong>{entry.name}</strong>
+                  <span>{entry.badge}</span>
+                </div>
+                <strong className={styles.leaderScore}>{entry.score.toLocaleString()}</strong>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.rewardsSpotlight} aria-label="Rewards spotlight">
+          <div>
+            <p className={styles.sectionEyebrow}>REWARDS HUB</p>
+            <h2>Turn every round into bonus value.</h2>
+          </div>
+          <div className={styles.rewardsDetails}>
+            <div>
+              <span>Coins earned</span>
+              <strong>{gameCoins}</strong>
+            </div>
+            <button type="button" onClick={() => navigate('/redeem')}>Redeem rewards</button>
+          </div>
+        </section>
 
         <section className={styles.librarySection} id="library" aria-labelledby="library-title">
           <div className={styles.libraryHeading}>

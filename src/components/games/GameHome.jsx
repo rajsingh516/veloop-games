@@ -76,6 +76,59 @@ const addMergeTile = (board) => {
   return next;
 };
 
+const readStoredScore = (route) => {
+  if (!route || typeof window === 'undefined') return 0;
+  try {
+    const raw = window.localStorage.getItem(`veloop-last-score-${route}`);
+    if (!raw) return 0;
+    const parsed = JSON.parse(raw);
+    return Number(parsed.score) || 0;
+  } catch {
+    return 0;
+  }
+};
+
+const challengeVariants = {
+  wordhunt: {
+    classic: { label: 'Classic', timeBonus: 0, streakBonus: 0.2, targetBonus: 0, hint: 'Balanced board with steady scoring and classic timing.' },
+    rush: { label: 'Rush', timeBonus: -10, streakBonus: 0.35, targetBonus: 1, hint: 'Faster rounds with a higher combo bonus.' },
+    combo: { label: 'Combo Chase', timeBonus: 0, streakBonus: 0.5, targetBonus: 2, hint: 'Chain matches for bigger boosts and deeper word streaks.' }
+  },
+  merge: {
+    classic: { label: 'Classic', target: 2048, extraSpawn: 1, comboBonus: 0.18, hint: 'Standard merge board and a clean 2048 goal.' },
+    turbo: { label: 'Turbo', target: 2048, extraSpawn: 2, comboBonus: 0.28, hint: 'Extra openings appear after every move for a faster rush.' },
+    goal: { label: 'Goal Rush', target: 4096, extraSpawn: 2, comboBonus: 0.35, hint: 'Higher target, faster momentum, and sharper rewards.' }
+  }
+};
+
+const achievementCatalog = [
+  { id: 'first-spark', title: 'First Spark', route: 'all', type: 'score', threshold: 60, icon: '✦' },
+  { id: 'word-wizard', title: 'Word Wizard', route: 'word-hunt', type: 'score', threshold: 150, icon: '✍️' },
+  { id: 'merge-master', title: 'Merge Master', route: 'merge-master', type: 'score', threshold: 300, icon: '⚡' },
+  { id: 'combo-surge', title: 'Combo Surge', route: 'all', type: 'variant', variant: 'combo', icon: '🔥' }
+];
+
+const readStoredList = (key, fallback = []) => {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+const writeStoredList = (key, value) => {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // storage may be unavailable; ignore
+  }
+};
+
 export default function GameHome() {
   const { gameId } = useParams();
   const location = useLocation();
@@ -92,8 +145,15 @@ export default function GameHome() {
   const game = location.state?.game || gamesData.find((item) => item.route === gameId);
   const gameRecord = gameRecords[game?.route] || { bestScore: 0, roundsPlayed: 0 };
   const duration = game?.mode === 'wordhunt' ? wordLength : roundLength;
+  const getLeaderboardEntries = useCallback((route) => readStoredList(`veloop-leaderboard-${route}`, []), []);
   const [gameState, setGameState] = useState('home');
   const [score, setScore] = useState(0);
+  const [lastScore, setLastScore] = useState(() => readStoredScore(game?.route));
+  const [selectedVariant, setSelectedVariant] = useState('classic');
+  const [leaderboard, setLeaderboard] = useState(() => getLeaderboardEntries(game?.route));
+  const [achievementState, setAchievementState] = useState(() => readStoredList('veloop-achievements', []));
+  const [comboBanner, setComboBanner] = useState('');
+  const [comboStreak, setComboStreak] = useState(0);
   const [timeLeft, setTimeLeft] = useState(duration);
   const [playerLane, setPlayerLane] = useState(1);
   const [lives, setLives] = useState(3);
@@ -128,6 +188,57 @@ export default function GameHome() {
   const wordPointerRef = useRef(null);
   const suppressWordClickRef = useRef(false);
   const mergeTargetReachedRef = useRef(false);
+  const audioContextRef = useRef(null);
+
+  const activeChallenge = challengeVariants[game?.mode]?.[selectedVariant] || challengeVariants[game?.mode]?.classic || { label: 'Classic' };
+
+  const playTone = useCallback((tone = 'success') => {
+    if (typeof window === 'undefined') return;
+    const AudioConstructor = window.AudioContext || window.webkitAudioContext;
+    if (!AudioConstructor) return;
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioConstructor();
+    }
+    const context = audioContextRef.current;
+    const now = context.currentTime;
+    const oscillator = context.createOscillator();
+    const gainNode = context.createGain();
+    oscillator.type = tone === 'combo' ? 'triangle' : 'sine';
+    oscillator.frequency.setValueAtTime(tone === 'combo' ? 520 : 660, now);
+    oscillator.frequency.exponentialRampToValueAtTime(tone === 'combo' ? 920 : 420, now + 0.14);
+    gainNode.gain.setValueAtTime(0.0001, now);
+    gainNode.gain.exponentialRampToValueAtTime(0.08, now + 0.015);
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+    oscillator.connect(gainNode);
+    gainNode.connect(context.destination);
+    oscillator.start(now);
+    oscillator.stop(now + 0.18);
+    if (context.state === 'suspended') {
+      context.resume().catch(() => undefined);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!game?.route) return;
+    setLastScore(readStoredScore(game.route));
+    setLeaderboard(getLeaderboardEntries(game.route));
+    setSelectedVariant('classic');
+  }, [game?.route]);
+
+  useEffect(() => {
+    if (!game?.route) return;
+    try {
+      window.localStorage.setItem(`veloop-last-score-${game.route}`, JSON.stringify({ score: lastScore, savedAt: Date.now() }));
+    } catch {
+      // storage unavailable; ignore
+    }
+  }, [game?.route, lastScore]);
+
+  useEffect(() => {
+    if (!comboBanner) return undefined;
+    const timeoutId = window.setTimeout(() => setComboBanner(''), 1200);
+    return () => window.clearTimeout(timeoutId);
+  }, [comboBanner]);
 
   useEffect(() => () => {
     window.clearTimeout(startTimeoutRef.current);
@@ -138,6 +249,42 @@ export default function GameHome() {
     playerLaneRef.current = lane;
     setPlayerLane(lane);
   };
+
+  const unlockAchievements = useCallback((route, finalScore, variant) => {
+    const nextUnlocks = achievementCatalog.filter((achievement) => {
+      if (achievementState.some((entry) => entry.id === achievement.id)) return false;
+      if (achievement.route !== 'all' && achievement.route !== route) return false;
+      if (achievement.type === 'score') return finalScore >= achievement.threshold;
+      if (achievement.type === 'variant') return variant === achievement.variant;
+      return false;
+    }).map((achievement) => ({
+      id: achievement.id,
+      title: achievement.title,
+      icon: achievement.icon,
+      unlockedAt: Date.now()
+    }));
+
+    if (!nextUnlocks.length) return;
+    const updated = [...achievementState, ...nextUnlocks];
+    setAchievementState(updated);
+    writeStoredList('veloop-achievements', updated);
+  }, [achievementState]);
+
+  const registerLeaderboardEntry = useCallback((route, scoreValue, variantName) => {
+    if (!route) return;
+    const record = {
+      id: `${route}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      route,
+      score: scoreValue,
+      variant: variantName,
+      savedAt: Date.now()
+    };
+    const next = [...getLeaderboardEntries(route), record]
+      .sort((left, right) => right.score - left.score)
+      .slice(0, 5);
+    setLeaderboard(next);
+    writeStoredList(`veloop-leaderboard-${route}`, next);
+  }, [getLeaderboardEntries]);
 
   const submitWord = useCallback((selection = wordSelection) => {
     const word = selection.map((index) => wordGrid[Math.floor(index / wordGridSize)][index % wordGridSize]).join('').toLowerCase();
@@ -161,11 +308,26 @@ export default function GameHome() {
     }
     setFoundWords((previous) => [...previous, targetWord]);
     const points = getWordPoints(targetWord);
-    setScore((previous) => previous + points);
-    setWordMessage(`+${points} ${points === 1 ? 'point' : 'points'} · ${targetWord.toUpperCase()} found!`);
+    setComboStreak((previousCombo) => {
+      const nextCombo = previousCombo + 1;
+      const streakMultiplier = 1 + (activeChallenge?.streakBonus || 0) * nextCombo;
+      const comboPoints = Math.round(points * streakMultiplier);
+      const bonus = comboPoints - points;
+      setScore((previous) => previous + comboPoints);
+      setWordMessage(`${nextCombo > 1 ? `Combo x${nextCombo}! ` : ''}+${comboPoints} · ${targetWord.toUpperCase()} found!`);
+      if (nextCombo > 1) {
+        setComboBanner(`Combo x${nextCombo} · +${bonus} bonus`);
+        playTone('combo');
+      } else {
+        setComboBanner(`Word cleared · +${comboPoints}`);
+        playTone('success');
+      }
+      window.setTimeout(() => setComboStreak(0), 1200);
+      return nextCombo;
+    });
     setWordSelection([]);
     if (foundWords.length + 1 === wordTargets.length) setGameState('gameover');
-  }, [foundWords, wordGrid, wordSelection, wordTargets]);
+  }, [activeChallenge, foundWords, playTone, wordGrid, wordSelection, wordTargets]);
 
   const selectWordCell = (index) => {
     setWordMessage('');
@@ -282,11 +444,20 @@ export default function GameHome() {
     const { board: shiftedBoard, gained } = slideMergeBoard(mergeBoard, direction);
     const changed = shiftedBoard.some((row, rowIndex) => row.some((value, columnIndex) => value !== mergeBoard[rowIndex][columnIndex]));
     if (!changed) return;
-    const nextBoard = addMergeTile(shiftedBoard);
+    const variantConfig = challengeVariants.merge[selectedVariant] || challengeVariants.merge.classic;
+    const nextBoard = addMergeTile(shiftedBoard, variantConfig.extraSpawn || 1);
     setMergeBoard(nextBoard);
     setMergeTurn((previous) => previous + 1);
-    if (gained > 0) setScore((previous) => previous + gained);
-    const reachedTarget = nextBoard.some((row) => row.some((value) => value >= 2048));
+    if (gained > 0) {
+      const extraBonus = Math.round(gained * (variantConfig.comboBonus || 0.2));
+      const totalGain = gained + extraBonus;
+      setScore((previous) => previous + totalGain);
+      setComboBanner(`Merge combo +${totalGain}`);
+      playTone('combo');
+    } else {
+      setComboBanner('No merge — keep sliding');
+    }
+    const reachedTarget = nextBoard.some((row) => row.some((value) => value >= (variantConfig.target || 2048)));
     if (reachedTarget && !mergeTargetReachedRef.current) {
       mergeTargetReachedRef.current = true;
       setMergeWon(true);
@@ -294,7 +465,7 @@ export default function GameHome() {
     if (!canMergeMove(nextBoard)) {
       setGameState('gameover');
     }
-  }, [game?.mode, gameState, mergeBoard]);
+  }, [game?.mode, gameState, mergeBoard, playTone, selectedVariant]);
 
   useEffect(() => {
     if (gameState !== 'playing' || game?.mode === 'merge') return undefined;
@@ -396,8 +567,12 @@ export default function GameHome() {
     setNotice('');
     setRewardNotice(null);
     setScore(0);
-    setTimeLeft(duration);
-    timeLeftRef.current = duration;
+    setComboBanner('');
+    setComboStreak(0);
+    const selectedConfig = challengeVariants[game.mode]?.[selectedVariant] || challengeVariants[game.mode].classic;
+    const roundTime = Math.max(15, duration + (selectedConfig.timeBonus || 0));
+    setTimeLeft(roundTime);
+    timeLeftRef.current = roundTime;
     setPlayerLane(1);
     playerLaneRef.current = 1;
     setLives(3);
@@ -523,7 +698,11 @@ export default function GameHome() {
   const finishRound = () => {
     if (payoutClaimedRef.current) return;
     payoutClaimedRef.current = true;
-    recordGameRound(game.route, score, earnedCoins);
+    const finalScore = Number.isFinite(score) ? score : 0;
+    setLastScore(finalScore);
+    recordGameRound(game.route, finalScore, earnedCoins);
+    registerLeaderboardEntry(game.route, finalScore, selectedVariant);
+    unlockAchievements(game.route, finalScore, selectedVariant);
     setRewardNotice(earnedCoins);
     setGameState('home');
   };
@@ -562,8 +741,72 @@ export default function GameHome() {
             </div>
           </div>
 
-          {gameRecord.roundsPlayed > 0 && (
+          <section className={styles.variantPanel} aria-label="Challenge mode selection">
+            <div className={styles.panelHeader}>
+              <p className={styles.eyebrow}>CHALLENGE MODE</p>
+              <span className={styles.modeTag}>{activeChallenge.label}</span>
+            </div>
+            <div className={styles.variantGrid}>
+              {Object.entries(challengeVariants[game.mode] || {}).map(([variantKey, config]) => (
+                <button
+                  key={variantKey}
+                  type="button"
+                  className={`${styles.variantButton} ${selectedVariant === variantKey ? styles.variantButtonActive : ''}`}
+                  onClick={() => setSelectedVariant(variantKey)}
+                >
+                  {config.label}
+                </button>
+              ))}
+            </div>
+            <p className={styles.variantSummary}>{activeChallenge.hint}</p>
+          </section>
+
+          <section className={styles.achievementPanel} aria-label="Achievement board">
+            <div className={styles.panelHeader}>
+              <p className={styles.eyebrow}>ACHIEVEMENTS</p>
+            </div>
+            <div className={styles.achievementList}>
+              {achievementCatalog.map((achievement) => {
+                const unlocked = achievementState.some((entry) => entry.id === achievement.id);
+                const visibleRoute = achievement.route === 'all' || achievement.route === game.route;
+                if (!visibleRoute) return null;
+
+                return (
+                  <div key={achievement.id} className={`${styles.achievementBadge} ${unlocked ? styles.achievementUnlocked : ''}`}>
+                    <span>{achievement.icon}</span>
+                    <div>
+                      <strong>{achievement.title}</strong>
+                      <small>{unlocked ? 'Unlocked' : achievement.type === 'score' ? `Score ${achievement.threshold}+` : 'Variant challenge'}</small>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {leaderboard.length > 0 && (
+            <section className={styles.leaderboardPanel} aria-label="Leaderboard">
+              <div className={styles.panelHeader}>
+                <p className={styles.eyebrow}>LEADERBOARD</p>
+              </div>
+              <div className={styles.leaderboardList}>
+                {leaderboard.map((entry, index) => (
+                  <div key={entry.id} className={styles.leaderboardRow}>
+                    <span>#{index + 1}</span>
+                    <strong>{entry.score.toLocaleString()}</strong>
+                    <small>{entry.variant}</small>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {(gameRecord.roundsPlayed > 0 || lastScore > 0) && (
             <section className={styles.personalRecord} aria-label="Personal game records">
+              <div>
+                <span>LAST RUN</span>
+                <strong>{lastScore.toLocaleString()}</strong>
+              </div>
               <div>
                 <span>PERSONAL BEST</span>
                 <strong>{gameRecord.bestScore.toLocaleString()}</strong>
@@ -661,6 +904,9 @@ export default function GameHome() {
 
       {gameState === 'playing' && (
         <section className={styles.activePlayArea} aria-label={`${game.name} gameplay`}>
+          {comboBanner && (
+            <div className={styles.comboBanner} aria-live="polite">{comboBanner}</div>
+          )}
           <header className={styles.gameHud}>
             <span>Score <strong>{score}</strong></span>
             {game.mode === 'wordhunt'
