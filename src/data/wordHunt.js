@@ -3,6 +3,9 @@ const wordBank = `ABOUT ABOVE ACTOR ACORN ADULT AFTER AGAIN AGENT AGREE AISLE AL
 export const wordGridSize = 8;
 export const wordsPerRound = 8;
 
+export const getWordHuntLevelTargetCount = (level) => Math.min(12, 8 + Math.max(0, level - 1) * 2);
+export const getWordHuntLevelTimer = (level) => Math.max(36, 90 - Math.max(0, level - 1) * 12);
+
 const directions = [
   [-1, -1], [-1, 0], [-1, 1],
   [0, -1], [0, 1],
@@ -35,12 +38,14 @@ const makePlacements = (word) => {
   return shuffle(placements);
 };
 
-export const createWordHuntRound = (candidateWords = wordBank) => {
+export const createWordHuntRound = (candidateWords = wordBank, targetCount = wordsPerRound) => {
+  const requiredWords = Math.max(4, Math.min(targetCount, wordGridSize));
+
   for (let attempt = 0; attempt < 200; attempt += 1) {
     const targets = shuffle(candidateWords.filter((word) => word.length >= 4 && word.length <= wordGridSize))
-      .slice(0, wordsPerRound)
+      .slice(0, requiredWords)
       .sort((left, right) => right.length - left.length);
-    if (targets.length < wordsPerRound) break;
+    if (targets.length < requiredWords) break;
     const cells = Array.from({ length: wordGridSize }, () => Array(wordGridSize).fill(''));
 
     const placeWord = (wordIndex) => {

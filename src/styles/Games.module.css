@@ -677,14 +677,53 @@
 }
 
 .gameCard {
+  --card-tone-a: #d7bd82;
+  --card-tone-b: #8a74ff;
+  --card-tone-c: #f0f4ff;
+  position: relative;
   min-width: 0;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  background: linear-gradient(145deg, #1c1d24, #17181e);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(28, 29, 36, 0.96), rgba(23, 24, 30, 0.96));
   animation: riseIn 430ms calc(var(--card-order, 0) * 35ms) both;
   transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
   will-change: transform;
+}
+
+.wordHuntCard {
+  --card-tone-a: #58d2ff;
+  --card-tone-b: #7a5cff;
+  --card-tone-c: #e2ff87;
+  box-shadow: 0 18px 36px rgba(79, 110, 255, 0.18);
+}
+
+.mergeMasterCard {
+  --card-tone-a: #51e4c2;
+  --card-tone-b: #2f9dff;
+  --card-tone-c: #fff1a8;
+  box-shadow: 0 18px 36px rgba(38, 158, 122, 0.16);
+}
+
+.gameCard::before {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--card-tone-a) 38%, transparent), transparent 34%),
+    linear-gradient(135deg, color-mix(in srgb, var(--card-tone-b) 20%, transparent), transparent 52%);
+  content: "";
+  pointer-events: none;
+}
+
+.gameCard::after {
+  position: absolute;
+  inset: auto 14px 0;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--card-tone-a), var(--card-tone-b));
+  box-shadow: 0 0 20px color-mix(in srgb, var(--card-tone-a) 60%, transparent);
+  content: "";
+  opacity: 0.9;
 }
 
 .gameCard:hover {
@@ -702,8 +741,69 @@
   padding: 0;
   aspect-ratio: 1.52;
   border: 0;
-  background: #25242f;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--card-tone-a) 18%, #1e212a), #121722 58%),
+    #25242f;
   cursor: pointer;
+}
+
+.cardArtwork::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 28%, rgba(7, 8, 14, 0.28));
+  content: "";
+  pointer-events: none;
+}
+
+.cardVariantBadge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(18, 20, 30, 0.72);
+  color: #f7f4f1;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.cardVariantDescriptor {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  z-index: 2;
+  padding: 4px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(7, 9, 14, 0.4);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.wordHuntCard .cardArtwork {
+  background: linear-gradient(135deg, rgba(17, 31, 80, 0.92), rgba(39, 21, 76, 0.92) 55%, rgba(11, 17, 35, 0.92));
+}
+
+.mergeMasterCard .cardArtwork {
+  background: linear-gradient(135deg, rgba(18, 48, 48, 0.92), rgba(14, 29, 45, 0.92) 55%, rgba(14, 12, 24, 0.92));
+}
+
+.wordHuntCard .cardVariantBadge {
+  background: linear-gradient(135deg, rgba(88, 210, 255, 0.26), rgba(122, 92, 255, 0.34));
+}
+
+.mergeMasterCard .cardVariantBadge {
+  background: linear-gradient(135deg, rgba(81, 228, 194, 0.26), rgba(47, 157, 255, 0.34));
 }
 
 .cardArtwork:disabled {
@@ -787,6 +887,8 @@
 }
 
 .cardDetails {
+  position: relative;
+  z-index: 1;
   padding: 13px 14px 14px;
 }
 
@@ -830,6 +932,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 8px;
   padding-top: 9px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -838,26 +941,41 @@
 .tokenRequirement {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 5px;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  padding: 5px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
   color: #aeb0ba;
   font-size: 10px;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .tokenRequirement img {
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 .tokenRequirement strong {
-  color: #e8e6e0;
-  font-size: 11px;
+  color: #f5f1ea;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 .playNowBtn {
   min-height: 29px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 7px;
+  flex-shrink: 0;
   padding: 0 10px;
   border: 1px solid rgba(201, 255, 112, 0.27);
   border-radius: 7px;
@@ -1827,7 +1945,10 @@
 }
 
 .carouselSet .tokenRequirement {
-  gap: 4px;
+  gap: 6px;
+  padding: 6px 10px;
+  border-color: rgba(215, 189, 130, 0.2);
+  background: rgba(21, 23, 32, 0.72);
   color: #b8bac4;
   white-space: nowrap;
 }
@@ -1839,6 +1960,7 @@
 
 .carouselSet .tokenRequirement strong {
   color: #f1e5c5;
+  font-size: 13px;
 }
 
 .carouselSet .playNowBtn {
@@ -1855,6 +1977,10 @@
   box-shadow: 0 5px 14px rgba(178, 146, 75, 0.16);
   isolation: isolate;
   transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.carouselSet .cardFooter {
+  align-items: center;
 }
 
 .carouselSet .playNowBtn::after {

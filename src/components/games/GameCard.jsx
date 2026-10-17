@@ -7,6 +7,16 @@ export default function GameCard({ game, index = 0, isClone = false }) {
   const navigate = useNavigate();
   const { tokens } = useGameCoins();
   const hasEntryTokens = tokens >= game.cost;
+  const variant = game.route === 'word-hunt' ? 'word-hunt' : game.route === 'merge-master' ? 'merge-master' : 'default';
+  const palette = {
+    'toilet-tactics': { a: '#ff8c55', b: '#ff4d6d', c: '#ffe29a' },
+    'word-hunt': { a: '#61dafb', b: '#7a5cff', c: '#d7ff8a' },
+    'merge-master': { a: '#4fe1c1', b: '#2b9dff', c: '#f9e79f' },
+    default: { a: '#d7bd82', b: '#8a74ff', c: '#f0f4ff' }
+  }[game.route] || { a: '#d7bd82', b: '#8a74ff', c: '#f0f4ff' };
+  const cardVariantClass = variant === 'word-hunt' ? 'wordHuntCard' : variant === 'merge-master' ? 'mergeMasterCard' : '';
+  const variantBadge = variant === 'word-hunt' ? 'WORD HUNT' : variant === 'merge-master' ? '2048 RUSH' : 'ARCADE';
+  const variantDescriptor = variant === 'word-hunt' ? 'Hidden words' : variant === 'merge-master' ? 'Tile fusion' : 'Challenge';
 
   const handlePlayClick = () => {
     if (!game.playable) return;
@@ -18,7 +28,15 @@ export default function GameCard({ game, index = 0, isClone = false }) {
   };
 
   return (
-    <article className={styles.gameCard} style={{ '--card-order': index }}>
+    <article
+      className={`${styles.gameCard} ${cardVariantClass ? styles[cardVariantClass] : ''}`.trim()}
+      style={{
+        '--card-order': index,
+        '--card-tone-a': palette.a,
+        '--card-tone-b': palette.b,
+        '--card-tone-c': palette.c
+      }}
+    >
       <button
         className={styles.cardArtwork}
         type="button"
@@ -28,6 +46,10 @@ export default function GameCard({ game, index = 0, isClone = false }) {
         aria-label={game.playable ? `View ${game.name}` : `${game.name}, coming soon`}
       >
         <img src={game.image} alt="" loading="lazy" />
+        {variant !== 'default' && (
+          <span className={styles.cardVariantBadge}>{variantBadge}</span>
+        )}
+        <span className={styles.cardVariantDescriptor}>{variantDescriptor}</span>
         <span className={`${styles.availabilityBadge} ${game.playable ? styles.availableBadge : ''}`}>
           <span />{game.playable ? 'PLAY NOW' : 'COMING SOON'}
         </span>

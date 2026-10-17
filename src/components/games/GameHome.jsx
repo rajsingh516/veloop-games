@@ -1,7 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { gamesData } from '../../data/gamesData';
-import { createWordHuntRound, wordGridSize } from '../../data/wordHunt';
+import {
+  createWordHuntRound,
+  getWordHuntLevelTargetCount,
+  getWordHuntLevelTimer,
+  wordGridSize
+} from '../../data/wordHunt';
 import { useGameCoins } from '../../context/useGameCoins';
 import styles from '../../styles/GamePlay.module.css';
 
@@ -148,6 +153,7 @@ export default function GameHome() {
   const getLeaderboardEntries = useCallback((route) => readStoredList(`veloop-leaderboard-${route}`, []), []);
   const [gameState, setGameState] = useState('home');
   const [score, setScore] = useState(0);
+  const [level, setLevel] = useState(1);
   const [lastScore, setLastScore] = useState(() => readStoredScore(game?.route));
   const [selectedVariant, setSelectedVariant] = useState('classic');
   const [leaderboard, setLeaderboard] = useState(() => getLeaderboardEntries(game?.route));
@@ -223,6 +229,7 @@ export default function GameHome() {
     setLastScore(readStoredScore(game.route));
     setLeaderboard(getLeaderboardEntries(game.route));
     setSelectedVariant('classic');
+    setLevel(1);
   }, [game?.route]);
 
   useEffect(() => {
@@ -562,7 +569,7 @@ export default function GameHome() {
     );
   }
 
-  const startRound = () => {
+  const startRound = (nextLevel = level) => {
     window.clearTimeout(rollTimeoutRef.current);
     setNotice('');
     setRewardNotice(null);
@@ -570,6 +577,25 @@ export default function GameHome() {
     setComboBanner('');
     setComboStreak(0);
     const selectedConfig = challengeVariants[game.mode]?.[selectedVariant] || challengeVariants[game.mode].classic;
+
+    if (game.mode === 'wordhunt') {
+      const levelConfig = {
+        targetCount: getWordHuntLevelTargetCount(nextLevel),
+        timer: getWordHuntLevelTimer(nextLevel)
+      };
+      const levelDictionary = [...wordDictionary].filter((word) => word.length >= 4 && word.length <= Math.min(8, 5 + nextLevel)).sort((left, right) => right.length - left.length || left.localeCompare(right));
+      const generatedRound = createWordHuntRound(levelDictionary, levelConfig.targetCount);
+      setWordRound(generatedRound);
+      setTimeLeft(levelConfig.timer);
+      timeLeftRef.current = levelConfig.timer;
+      payoutClaimedRef.current = false;
+      setWordSelection([]);
+      setFoundWords([]);
+      setWordMessage(`Level ${nextLevel} · ${levelConfig.targetCount} words`);
+      setGameState('playing');
+      return;
+    }
+
     const roundTime = Math.max(15, duration + (selectedConfig.timeBonus || 0));
     setTimeLeft(roundTime);
     timeLeftRef.current = roundTime;
@@ -587,7 +613,6 @@ export default function GameHome() {
     setPinsRemaining(10);
     setThrowsLeft(3);
     setIsRolling(false);
-    setWordRound(createWordHuntRound([...wordDictionary]));
     setWordSelection([]);
     setFoundWords([]);
     setWordMessage('');
@@ -692,13 +717,41 @@ export default function GameHome() {
     setGameState('playing');
   };
 
+  const advanceWordLevel = useCallback((nextLevel) => {
+    const levelValue = Math.max(1, nextLevel);
+    setLevel(levelValue);
+    setScore(0);
+    setFoundWords([]);
+    setWordSelection([]);
+    setNotice(`Level cleared! Entering level ${levelValue}.`);
+    window.setTimeout(() => setNotice(''), 1600);
+    window.setTimeout(() => {
+      startRound(levelValue);
+    }, 400);
+  }, [startRound]);
+
   const earnedCoins = Math.min(20, game.mode === 'wordhunt'
     ? score
     : Math.floor(score / (game.mode === 'bowler' ? 10 : 5)));
+
   const finishRound = () => {
     if (payoutClaimedRef.current) return;
     payoutClaimedRef.current = true;
+
     const finalScore = Number.isFinite(score) ? score : 0;
+    const levelCleared = game.mode === 'wordhunt' && foundWords.length === wordTargets.length;
+
+    if (levelCleared) {
+      const nextLevel = level + 1;
+      setLastScore(finalScore);
+      recordGameRound(game.route, finalScore, earnedCoins);
+      registerLeaderboardEntry(game.route, finalScore, selectedVariant);
+      unlockAchievements(game.route, finalScore, selectedVariant);
+      setRewardNotice(earnedCoins);
+      advanceWordLevel(nextLevel);
+      return;
+    }
+
     setLastScore(finalScore);
     recordGameRound(game.route, finalScore, earnedCoins);
     registerLeaderboardEntry(game.route, finalScore, selectedVariant);
@@ -910,6 +963,13 @@ export default function GameHome() {
           <header className={styles.gameHud}>
             <span>Score <strong>{score}</strong></span>
             {game.mode === 'wordhunt'
+              ? <span>Level <strong>{level}</strong></span>
+              : game.mode === 'merge'
+                ? <span>Top tile <strong>{Math.max(...mergeBoard.flat())}</strong></span>
+                : game.mode === 'bowler'
+                  ? <span>Pins <strong>{pinsRemaining}</strong></span>
+                  : <span>Shields <strong>{'●'.repeat(lives)}{'○'.repeat(3 - lives)}</strong></span>}
+            {game.mode === 'wordhunt'
               ? <span>Words <strong>{foundWords.length}</strong></span>
               : game.mode === 'merge'
                 ? <span>Top tile <strong>{Math.max(...mergeBoard.flat())}</strong></span>
@@ -918,9 +978,13 @@ export default function GameHome() {
                   : <span>Shields <strong>{'●'.repeat(lives)}{'○'.repeat(3 - lives)}</strong></span>}
             {game.mode === 'merge'
               ? <span>Moves <strong>{mergeTurn}</strong></span>
-              : <span className={timeLeft <= 10 ? styles.timeWarning : ''} role="timer" aria-label={`${timeLeft} seconds remaining`}>
-                Time <strong>{timeLeft}s</strong>
-              </span>}
+              : game.mode === 'wordhunt'
+                ? <span className={timeLeft <= 10 ? styles.timeWarning : ''} role="timer" aria-label={`${timeLeft} seconds remaining`}>
+                  Time <strong>{timeLeft}s</strong>
+                </span>
+                : <span className={timeLeft <= 10 ? styles.timeWarning : ''} role="timer" aria-label={`${timeLeft} seconds remaining`}>
+                  Time <strong>{timeLeft}s</strong>
+                </span>}
           </header>
 
           {game.mode === 'wordhunt' ? (

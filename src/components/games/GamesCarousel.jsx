@@ -12,7 +12,6 @@ export default function GamesCarousel() {
   const [search, setSearch] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
-  const [isInteracting, setIsInteracting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const { tokens, gameCoins, gameRecords } = useGameCoins();
   const navigate = useNavigate();
@@ -63,58 +62,40 @@ export default function GamesCarousel() {
 
   const pauseForInteraction = () => {
     window.clearTimeout(interactionTimeoutRef.current);
-    setIsInteracting(true);
-    interactionTimeoutRef.current = window.setTimeout(() => setIsInteracting(false), 4500);
+    interactionTimeoutRef.current = window.setTimeout(() => undefined, 4500);
   };
 
   useEffect(() => {
     const viewport = viewportRef.current;
     if (!viewport) return undefined;
-    const middleGroup = groupRefs.current[1];
-    viewport.scrollLeft = middleGroup ? middleGroup.offsetLeft : 0;
+    viewport.scrollLeft = 0;
     setActiveIndex(0);
     return undefined;
   }, [visibleGames]);
 
   useEffect(() => () => window.clearTimeout(interactionTimeoutRef.current), []);
 
-  useEffect(() => {
-    if (isHovering || isInteracting || visibleGames.length < 3) return undefined;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
-
-    const timer = window.setInterval(() => {
-      const viewport = viewportRef.current;
-      const cards = groupRefs.current[1]?.children;
-      if (!viewport || !cards || cards.length < 2) return;
-      const stride = cards[1].offsetLeft - cards[0].offsetLeft;
-      viewport.scrollTo({ left: viewport.scrollLeft + stride, behavior: 'smooth' });
-    }, 3600);
-
-    return () => window.clearInterval(timer);
-  }, [isHovering, isInteracting, visibleGames.length]);
-
   const updateCarouselPosition = () => {
     const viewport = viewportRef.current;
-    const firstGroup = groupRefs.current[0];
-    const middleGroup = groupRefs.current[1];
-    if (!viewport || !firstGroup || !middleGroup || visibleGames.length < 3) return;
+    if (!viewport || visibleGames.length === 0) return;
 
-    const cycleWidth = middleGroup.offsetLeft - firstGroup.offsetLeft;
-    const cards = middleGroup.children;
-    if (!cycleWidth || cards.length < 2) return;
-
-    let position = viewport.scrollLeft;
-    if (position < cycleWidth * 0.5) {
-      position += cycleWidth;
-      viewport.scrollLeft = position;
-    } else if (position >= cycleWidth * 1.5) {
-      position -= cycleWidth;
-      viewport.scrollLeft = position;
+    const cards = groupRefs.current[0]?.children || [];
+    if (cards.length < 2) {
+      setActiveIndex(0);
+      return;
     }
 
     const stride = cards[1].offsetLeft - cards[0].offsetLeft;
-    const nextIndex = Math.round((position - middleGroup.offsetLeft) / stride);
-    setActiveIndex(((nextIndex % visibleGames.length) + visibleGames.length) % visibleGames.length);
+    if (!stride) {
+      setActiveIndex(0);
+      return;
+    }
+
+    const nextIndex = Math.min(
+      visibleGames.length - 1,
+      Math.max(0, Math.round(viewport.scrollLeft / stride))
+    );
+    setActiveIndex(nextIndex);
   };
 
   const goToGame = (index) => {
@@ -389,7 +370,7 @@ export default function GamesCarousel() {
                 </div>
               </div>
               <div className={styles.carouselFooter}>
-                <span className={styles.carouselHint}>Swipe, drag or scroll to explore · Auto-playing</span>
+                <span className={styles.carouselHint}>Swipe, drag or scroll to explore · Manual browsing</span>
                 <div className={styles.carouselIndicators} aria-label="Choose a game">
                   {visibleGames.map((game, index) => (
                     <button
